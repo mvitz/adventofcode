@@ -12,15 +12,15 @@ frequencies = [0]
 duplicated_frequency = nil
 
 until duplicated_frequency
-  File.open('input.txt', 'r') do |f|
-    f.each_line do |change|
-      frequency = frequencies.last + change.to_i
+  File.readlines('input.txt', mode: 'r')
+    .map(&:to_i)
+    .each do |change|
+      frequency = frequencies.last + change
       unless duplicated_frequency
         duplicated_frequency = frequency if frequencies.include? frequency
         frequencies << frequency
       end
     end
-  end
 end
 
 puts "Part 2: #{duplicated_frequency}"
