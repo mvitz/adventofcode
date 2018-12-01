@@ -27,4 +27,4 @@ until duplicated_frequency
   end
 end
 
-puts "First duplicated frequency: #{duplicated_frequency}"
+puts "Part 2: #{duplicated_frequency}"
