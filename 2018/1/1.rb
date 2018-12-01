@@ -1,13 +1,9 @@
 #!/usr/bin/env ruby
 
 # Part 1
-frequency = 0
-
-File.open('input.txt', 'r') do |f|
-  f.each_line do |change|
-    frequency = frequency + change.to_i
-  end
-end
+frequency = File.readlines('input.txt', mode: 'r')
+  .map(&:to_i)
+  .reduce(:+)
 
 puts "Part 1: #{frequency}"
 
