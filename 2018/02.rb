@@ -28,13 +28,13 @@ puts box_ids.map { |line|
   two = if char_count.has_value? 2 then 1 else 0 end
   three = if char_count.has_value? 3 then 1 else 0 end
   [two, three]
-}.reduce([0, 0]) { |memo, pair|
-  [memo[0] + pair[0], memo[1] + pair[1]]
+}.reduce([0, 0]) { |(m2, m3), (p2, p3)|
+  [m2 + p2, m3 + p3]
 }.reduce(1, :*)
 
 # Part 2
-pair = box_ids.select { |id|
+(first, second) = box_ids.select do |id|
   distances = box_ids.map { |i| id.distance_to i }
   distances.include? 1
-}
-puts pair[0].common_letters(pair[1]).join ''
+end
+puts first.common_letters(second).join ''
