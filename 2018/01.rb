@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-changes = File.readlines('input.txt', mode: 'r').map(&:to_i)
+changes = File.readlines('01_input.txt', mode: 'r').map(&:to_i)
 
 # Part 1
 frequency = changes.reduce(:+)
