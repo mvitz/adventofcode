@@ -1,8 +1,7 @@
 #!/usr/bin/env ruby
 
-box_ids = File.readlines('02_1_input.txt', mode: 'r')
+box_ids = File.readlines('02_input.txt', mode: 'r')
 
-# Part 1
 class String
   def char_count
     result = Hash.new(0)
@@ -11,8 +10,25 @@ class String
     end
     result
   end
+
+  def distance_to(other)
+    distance = 0
+    self.each_char.with_index do |char, index|
+      distance = distance + 1 unless char == other[index]
+    end
+    distance
+  end
+
+  def common_letters(other)
+    result = []
+    self.each_char.with_index do |char, index|
+      result << char if char == other[index]
+    end
+    result
+  end
 end
 
+# Part 1
 puts box_ids.map { |line|
   char_count = line.char_count
   two = if char_count.has_value? 2 then 1 else 0 end
@@ -21,3 +37,10 @@ puts box_ids.map { |line|
 }.reduce([0, 0]) { |memo, pair|
   [memo[0] + pair[0], memo[1] + pair[1]]
 }.reduce(1, :*)
+
+# Part 2
+pair = box_ids.select { |id|
+  distances = box_ids.map { |i| id.distance_to i }
+  distances.include? 1
+}
+puts pair[0].common_letters(pair[1]).join ''
