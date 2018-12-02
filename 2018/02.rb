@@ -1,30 +1,24 @@
 #!/usr/bin/env ruby
 
-box_ids = File.readlines('02_input.txt', mode: 'r')
+box_ids = File.readlines('02_input.txt', mode: 'r').map(&:strip)
 
 class String
   def char_count
-    result = Hash.new(0)
-    self.each_char do |char|
-      result[char] = result[char] + 1
+    self.chars.reduce(Hash.new(0)) do |memo, char|
+      memo[char] = memo[char] + 1
+      memo
     end
-    result
   end
 
   def distance_to(other)
-    distance = 0
-    self.each_char.with_index do |char, index|
-      distance = distance + 1 unless char == other[index]
-    end
-    distance
+    self.length - self.common_letters(other).length
   end
 
   def common_letters(other)
-    result = []
-    self.each_char.with_index do |char, index|
-      result << char if char == other[index]
+    self.chars.each_with_index.reduce([]) do |memo, (char, index)|
+      memo << char if char == other[index]
+      memo
     end
-    result
   end
 end
 
