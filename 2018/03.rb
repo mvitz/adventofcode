@@ -33,7 +33,7 @@ claimed_fields = claims
   .reduce({}) { |result, field|
     coordinate = field[:coordinate]
     # TODO: merge is slow, why?
-    #result.merge(coordinate => Set[field[:id]]) do |key, oldval, newval|
+    #result.merge!(coordinate => Set[field[:id]]) do |key, oldval, newval|
     #  oldval.merge newval
     #end
     ids = result[coordinate] || Set[]
