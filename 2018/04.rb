@@ -33,6 +33,7 @@ records.each do |record|
   end
 end
 
+# Part 1
 candidate = result
   .map { |k, v| { guard: k, sleep_period: v } }
   .sort_by { |r| [r[:sleep_period].count] }
@@ -47,3 +48,21 @@ period = candidate[:sleep_period]
   .last[:k]
 
 puts candidate[:guard] * period
+
+# Part 2
+candidate = result
+  .map { |k, v|
+    {
+      guard: k,
+      sleep_period: v
+        .reduce(Hash.new(0)) { |memo, t|
+          memo[t] = memo[t] + 1
+          memo
+        }.map { |key, value| { k: key, v: value } }
+        .sort_by { |r| [r[:v]] }
+    }
+  }
+  .sort_by { |r| [r[:sleep_period].last[:v]] }
+  .last
+
+puts candidate[:guard] * candidate[:sleep_period].last[:k]
