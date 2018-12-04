@@ -6,10 +6,9 @@ box_ids = File.readlines('02_input.txt', mode: 'r').map(&:strip)
 
 class String
   def char_count
-    self.chars.reduce(Hash.new(0)) do |memo, char|
-      memo[char] = memo[char] + 1
-      memo
-    end
+    self.chars
+      .group_by(&:itself)
+      .transform_values(&:count)
   end
 
   def distance_to(other)

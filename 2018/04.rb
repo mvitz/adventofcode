@@ -42,10 +42,9 @@ candidate = result
   .last
 
 period = candidate[:sleep_period]
-  .reduce(Hash.new(0)) { |memo, t|
-      memo[t] = memo[t] + 1
-      memo
-  }.map { |k, v| { k: k, v: v } }
+  .group_by(&:itself)
+  .transform_values(&:count)
+  .map { |k, v| { k: k, v: v } }
   .sort_by { |r| [r[:v]] }
   .last[:k]
 
@@ -57,10 +56,9 @@ candidate = result
     {
       guard: k,
       sleep_period: v
-        .reduce(Hash.new(0)) { |memo, t|
-          memo[t] = memo[t] + 1
-          memo
-        }.map { |key, value| { k: key, v: value } }
+        .group_by(&:itself)
+        .transform_values(&:count)
+        .map { |key, value| { k: key, v: value } }
         .sort_by { |r| [r[:v]] }
     }
   }
