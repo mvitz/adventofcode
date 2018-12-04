@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+#
+# Solution for https://adventofcode.com/2018/day/2
 
 box_ids = File.readlines('02_input.txt', mode: 'r').map(&:strip)
 

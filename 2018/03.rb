@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+#
+# Solution for https://adventofcode.com/2018/day/3
 
 require 'set'
 

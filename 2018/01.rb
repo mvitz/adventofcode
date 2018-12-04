@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+#
+# Solution for https://adventofcode.com/2018/day/1
 
 changes = File.readlines('01_input.txt', mode: 'r').map(&:to_i)
 

@@ -1,4 +1,6 @@
 #!/usr/bin/env ruby
+#
+# Solution for https://adventofcode.com/2018/day/4
 
 def parse_record(line)
   match = /^\[(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})\] (.*)$/.match(line)
