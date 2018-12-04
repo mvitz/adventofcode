@@ -3,19 +3,18 @@
 # Solution for https://adventofcode.com/2018/day/4
 
 def parse_record(line)
-  match = /^\[(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})\] (.*)$/.match(line)
+  match = /^\[\d{4}-\d{2}-\d{2} \d{2}:(\d{2})\] (.*)$/.match(line)
   {
-    timestamp: match[1..5].join('').to_i,
-    minutes: match[5].to_i,
-    description: match[6]
+    minutes: match[1].to_i,
+    description: match[2]
   }
 end
 
 #records = File.readlines('04_1_example.txt', mode: 'r')
 records = File.readlines('04_input.txt', mode: 'r')
   .map(&:strip)
+  .sort
   .map { |line| parse_record(line) }
-  .sort_by { |record| [record[:timestamp]] }
 
 current_guard = nil
 last_event = nil
@@ -37,32 +36,30 @@ end
 
 # Part 1
 candidate = result
-  .map { |k, v| { guard: k, sleep_period: v } }
-  .sort_by { |r| [r[:sleep_period].count] }
+  .sort_by { |guard, sleep_period| sleep_period.count }
   .last
+  .each_slice(2)
+  .to_h
+  .first
 
-period = candidate[:sleep_period]
+period = candidate[1]
   .group_by(&:itself)
   .transform_values(&:count)
-  .map { |k, v| { k: k, v: v } }
-  .sort_by { |r| [r[:v]] }
-  .last[:k]
+  .sort_by { |minute, count| count }
+  .last
+  .first
 
-puts candidate[:guard] * period
+puts candidate[0] * period
 
 # Part 2
 candidate = result
-  .map { |k, v|
-    {
-      guard: k,
-      sleep_period: v
-        .group_by(&:itself)
-        .transform_values(&:count)
-        .map { |key, value| { k: key, v: value } }
-        .sort_by { |r| [r[:v]] }
-    }
+  .transform_values { |sleep_period|
+    sleep_period
+      .group_by(&:itself)
+      .transform_values(&:count)
+      .sort_by { |minute, count| count }
   }
-  .sort_by { |r| [r[:sleep_period].last[:v]] }
+  .sort_by { |guard, sleep_period| sleep_period.last.last }
   .last
 
-puts candidate[:guard] * candidate[:sleep_period].last[:k]
+puts candidate[0] * candidate[1].last.first
