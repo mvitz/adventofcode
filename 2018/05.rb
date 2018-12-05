@@ -14,35 +14,36 @@ class String
   def remove_units(*units)
     self.chars.reject { |unit| units.include? unit }.join('')
   end
-end
 
-def react(polymer)
-  polymer.chars.reduce([]) do |result, unit|
-    last_unit = result.last
+  def react
+    self.chars.reduce([]) do |result, unit|
+      last_unit = result.last
 
-    if last_unit == unit.swapcase
-      result.pop
-    else
-      result << unit
+      if last_unit == unit.swapcase
+        result.pop
+      else
+        result << unit
+      end
+
+      result
     end
-
-    result
   end
 end
 
 polymer = File.readlines('05_input.txt').first.strip
 
 # Part 1
-reacted_polymer = react(polymer)
-puts reacted_polymer.length
+puts polymer
+  .react
+  .length
 
 # Part 2
 polymers = ('a'..'z').map do |unit|
   polymer.remove_units(unit, unit.upcase)
 end
 
-reacted_polymers = polymers.map do |polymer|
-  react(polymer)
-end
-
-puts reacted_polymers.map(&:length).sort.first
+puts polymers
+  .map(&:react)
+  .map(&:length)
+  .sort
+  .first
