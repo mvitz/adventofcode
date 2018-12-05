@@ -7,27 +7,22 @@ class String
     !!/[[:upper:]]/.match(self)
   end
 
-  def is_downcase?
-    !self.is_upcase?
+  def swapcase
+    if self.is_upcase? then self.downcase else self.upcase end
+  end
+
+  def remove_last
+    self[0...-1]
   end
 end
 
 polymer = File.readlines('05_input.txt').first.strip
+
 resulting_polymer = polymer.chars.reduce do |result, unit|
   last_unit = result.chars.last
+  current = unit.swapcase
 
-  current = unit
-  if unit.is_upcase?
-    current = unit.downcase
-  else
-    current = unit.upcase
-  end
-
-  if last_unit == current
-    result[0...-1]
-  else
-    result + unit
-  end
+  if last_unit == current then result.remove_last else result + unit end
 end
 
 puts resulting_polymer.length
