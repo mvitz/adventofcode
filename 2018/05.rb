@@ -16,13 +16,17 @@ class String
   end
 end
 
-polymer = File.readlines('05_input.txt').first.strip
+def react(polymer)
+  polymer.chars.reduce do |result, unit|
+    last_unit = result.chars.last
+    current = unit.swapcase
 
-resulting_polymer = polymer.chars.reduce do |result, unit|
-  last_unit = result.chars.last
-  current = unit.swapcase
-
-  if last_unit == current then result.remove_last else result + unit end
+    if last_unit == current then result.remove_last else result + unit end
+  end
 end
 
+polymer = File.readlines('05_input.txt').first.strip
+
+# Part 1
+resulting_polymer = react(polymer)
 puts resulting_polymer.length
