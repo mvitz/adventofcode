@@ -27,6 +27,7 @@ def process_steps(steps, workers = 1, step_durations = Hash.new(1))
 
   while steps.count > 0 or steps_in_progress.count > 0 do
 
+    # Cleanup finished work
     turn_finished_steps = steps_in_progress.delete(0) || []
     turn_finished_steps.each do |step|
       steps.transform_values! do |requirements|
@@ -37,19 +38,21 @@ def process_steps(steps, workers = 1, step_durations = Hash.new(1))
     workers += turn_finished_steps.length
     finished_steps += turn_finished_steps
 
+    # Add new work
     next_steps = steps.select { |step, requirement| requirement.empty? }.keys.sort.take workers
-    next_steps.each { |step| steps.delete step }
-    workers -= next_steps.length
-
     next_steps.each do |step|
+      steps.delete step
+
       step_duration = step_durations[step]
+
       work_for_duration = steps_in_progress[step_duration] || []
       work_for_duration << step
       steps_in_progress[step_duration] = work_for_duration
     end
+    workers -= next_steps.length
 
+    # Do work
     steps_in_progress.transform_keys! { |remaining_duration| remaining_duration - 1 }
-
     duration += 1
   end
 
