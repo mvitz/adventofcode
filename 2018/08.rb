@@ -7,25 +7,44 @@ input = File.readlines('08_input.txt').first.strip
 tree = input.split(' ').map(&:to_i)
 
 class Node
-  attr_accessor :children, :metadata
 
-  def sum_of_metadata
-    self.metadata.reduce(:+) + self.children.map(&:sum_of_metadata).reduce(0, :+)
+  def initialize
+    @children = []
+    @metadata = []
+  end
+
+  def add_child(child)
+    @children << child
+  end
+
+  def add_metadata(metadata)
+    @metadata << metadata
   end
 
   def has_children?
-    !self.children.empty?
+    !@children.empty?
+  end
+
+  def sum_of_metadata
+    metadata_value + @children.map(&:sum_of_metadata).reduce(0, :+)
   end
 
   def value
-    return self.metadata.reduce(0, :+) unless self.has_children?
+    return metadata_value unless has_children?
 
-    self.metadata
-      .map { |metadata| self.children[metadata - 1] }
+    @metadata
+      .map { |metadata| @children[metadata - 1] }
       .reject(&:nil?)
       .map(&:value)
       .reduce(0, :+)
   end
+
+  private
+
+  def metadata_value
+    @metadata.reduce(:+)
+  end
+
 end
 
 def parse(tree)
@@ -33,15 +52,13 @@ def parse(tree)
   number_of_metadata = tree.shift
 
   node = Node.new
-  node.children = []
 
   number_of_children.times do |n|
-    node.children << parse(tree)
+    node.add_child parse(tree)
   end
 
-  node.metadata = []
   number_of_metadata.times do |n|
-    node.metadata << tree.shift
+    node.add_metadata tree.shift
   end
 
   node
