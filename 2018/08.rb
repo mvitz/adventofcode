@@ -12,6 +12,20 @@ class Node
   def sum_of_metadata
     self.metadata.reduce(:+) + self.children.map(&:sum_of_metadata).reduce(0, :+)
   end
+
+  def has_children?
+    !self.children.empty?
+  end
+
+  def value
+    return self.metadata.reduce(0, :+) unless self.has_children?
+
+    self.metadata
+      .map { |metadata| self.children[metadata - 1] }
+      .reject(&:nil?)
+      .map(&:value)
+      .reduce(0, :+)
+  end
 end
 
 def parse(tree)
@@ -33,6 +47,10 @@ def parse(tree)
   node
 end
 
-# Part 1
 parent = parse(tree)
+
+# Part 1
 puts parent.sum_of_metadata
+
+# Part 2
+puts parent.value
