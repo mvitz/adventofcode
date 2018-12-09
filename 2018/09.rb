@@ -31,4 +31,4 @@ def play(players, last_marble)
 end
 
 # Part 1
-puts play(players, last_marble).reduce { |highscore, score| if highscore > score then highscore else score end }
+puts play(players, last_marble).max
