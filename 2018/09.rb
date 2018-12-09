@@ -7,23 +7,47 @@
 players = 486
 last_marble = 70833
 
-def play(players, last_marble)
-  points = players.times.map {|x| 0 }
+class Node
+  attr_accessor :value, :next, :previous
 
-  marbles = [0]
-  current_marble = 0
+  def initialize(value)
+    @value = value
+  end
+
+  def append(node)
+    node.next = @next
+    node.previous = self
+
+    @next.previous = node
+    @next = node
+
+    node
+  end
+
+  def remove
+    @previous.next = @next
+    @next.previous = @previous
+    @next
+  end
+
+end
+
+def play(players, last_marble)
+  points = players.times.map { |x| 0 }
+
+  current = Node.new 0
+  current.next = current
+  current.previous = current
 
   (1..last_marble).each do |marble|
     if marble % 23 == 0
-      current_player = marble % players
-      points[current_player] += marble
-      current_marble = current_marble - 7
-      current_marble = marbles.length + current_marble if current_marble < 0
-      points[current_player] += marbles.delete_at current_marble
+      7.times do
+        current = current.previous
+      end
+      points[marble % players] += (marble + current.value)
+      current = current.remove
     else
-      current_marble = current_marble + 2
-      current_marble -= marbles.length if current_marble > marbles.length
-      marbles.insert(current_marble, marble)
+      current = current.next.append(Node.new(marble))
     end
   end
 
@@ -32,3 +56,6 @@ end
 
 # Part 1
 puts play(players, last_marble).max
+
+# Part 2
+puts play(players, last_marble * 100).max
