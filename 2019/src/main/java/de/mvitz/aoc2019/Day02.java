@@ -1,9 +1,13 @@
 package de.mvitz.aoc2019;
 
 import java.util.List;
+import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /*
 --- Day 2: 1202 Program Alarm ---
@@ -151,60 +155,39 @@ public class Day02 {
 
     private static final class Intcode {
 
-        private final List<Integer> program;
+        private static final Map<Integer, Instruction> INSTRUCTIONS = stream(Instructions.values())
+                .collect(toMap(Instruction::opcode, identity()));
 
-        public Intcode(List<Integer> program) {
-            this.program = program;
-        }
+        private final List<Integer> memory;
 
-        public int get(int position) {
-            return program.get(position);
+        private Intcode(List<Integer> initialState) {
+            this.memory = initialState;
         }
 
         public void set(int position, int value) {
-            program.set(position, value);
+            memory.set(position, value);
         }
 
         public int execute() {
-            int currentPosition = 0;
-            while(currentPosition >= 0) {
-                int opcode = get(currentPosition);
-                currentPosition = switch (opcode) {
-                    case 1 -> handleAddition(currentPosition);
-                    case 2 -> handleMultiplication(currentPosition);
-                    case 99 -> handleHalt(currentPosition);
-                    default -> handleUnknown(currentPosition);
-                };
+            int instructionPointer = 0;
+            while(instructionPointer >= 0) {
+                int opcode = get(instructionPointer);
+                Instruction instruction = INSTRUCTIONS.get(opcode);
+                if (instruction == null) {
+                    throw new IllegalStateException("Unknown opcode: " + opcode);
+                }
+                instructionPointer = instruction.execute(instructionPointer, this);
             }
             return get(0);
         }
 
-        private int handleAddition(int position) {
-            set(get(position + 3), read(position + 1) + read(position + 2));
-            return position + 4;
-        }
-
-        private int handleMultiplication(int position) {
-            set(get(position + 3), read(position + 1) * read(position + 2));
-            return position + 4;
-        }
-
-        private int handleHalt(int position) {
-            return -1;
-        }
-
-        private int handleUnknown(int position) {
-            return -42;
+        private int get(int position) {
+            return memory.get(position);
         }
 
         private int read(int position) {
             int pointer = get(position);
             return get(pointer);
-        }
-
-        @Override
-        public String toString() {
-            return program.toString();
         }
 
         public static Intcode load(String code) {
@@ -213,6 +196,59 @@ public class Day02 {
                     .boxed()
                     .collect(toList());
             return new Intcode(program);
+        }
+
+        private interface Instruction {
+            int opcode();
+            int execute(int instructionPointer, Intcode program);
+        }
+
+        private enum Instructions implements Instruction {
+            ADDITION(1) {
+                @Override
+                public int execute(int instructionPointer, Intcode program) {
+                    int firstInput = program.read(instructionPointer + 1);
+                    int secondInput = program.read(instructionPointer + 2);
+                    int output = program.get(instructionPointer + 3);
+
+                    int result = firstInput + secondInput;
+
+                    program.set(output, result);
+
+                    return instructionPointer + 4;
+                }
+            },
+            MULTIPLICATION(2) {
+                @Override
+                public int execute(int instructionPointer, Intcode program) {
+                    int firstInput = program.read(instructionPointer + 1);
+                    int secondInput = program.read(instructionPointer + 2);
+                    int output = program.get(instructionPointer + 3);
+
+                    int result = firstInput * secondInput;
+
+                    program.set(output, result);
+
+                    return instructionPointer + 4;
+                }
+            },
+            HALT(99) {
+                @Override
+                public int execute(int instructionPointer, Intcode program) {
+                    return -1;
+                }
+            };
+
+            private final int opcode;
+
+            Instructions(int opcode) {
+                this.opcode = opcode;
+            }
+
+            @Override
+            public int opcode() {
+                return opcode;
+            }
         }
     }
 
