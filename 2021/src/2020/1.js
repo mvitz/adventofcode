@@ -1,3 +1,11 @@
+const part1 = (expenseReport) => {
+  return fixExpenseReport(expenseReport, 2)
+}
+
+const part2 = (expenseReport) => {
+  return fixExpenseReport(expenseReport, 3)
+}
+
 const fixExpenseReport = (expenseReport, size) => {
   return combinations(expenseReport, size)
     .filter(combination => sum(combination) === 2020)
@@ -25,4 +33,4 @@ const product = (array) => {
   return array.reduce((accumulator, entry) => accumulator * entry, 1)
 }
 
-module.exports = { fixExpenseReport }
+module.exports = { part1, part2 }
