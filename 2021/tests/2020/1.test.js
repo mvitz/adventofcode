@@ -2,7 +2,6 @@ const { linesOf, readPuzzleInput } = require('../../src/utils')
 const { part1, part2 } = require('../../src/2020/1')
 
 describe('fix expense report', () => {
-
   const example = `\
 1721
 979

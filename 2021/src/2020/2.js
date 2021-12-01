@@ -6,8 +6,8 @@ const part1 = input => {
     .length
 }
 
-const validPassword = ({min, max, char, password}) => {
-  const characters = characterOccurences(password);
+const validPassword = ({ min, max, char, password }) => {
+  const characters = characterOccurences(password)
   return characters[char] >= min && characters[char] <= max
 }
 
