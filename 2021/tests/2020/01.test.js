@@ -1,5 +1,5 @@
 const { linesOf, readPuzzleInput } = require('../../src/utils')
-const { part1, part2 } = require('../../src/2020/1')
+const { part1, part2 } = require('../../src/2020/01')
 
 describe('fix expense report', () => {
   const example = `\

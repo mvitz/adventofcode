@@ -1,5 +1,5 @@
 const { linesOf, readPuzzleInput } = require('../../src/utils')
-const { part1, part2, windows } = require('../../src/2021/1')
+const { part1, part2, windows } = require('../../src/2021/01')
 
 describe('2020 day 1', () => {
   const example = `\

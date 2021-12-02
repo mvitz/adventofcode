@@ -1,5 +1,5 @@
 const { linesOf, readPuzzleInput } = require('../../src/utils')
-const { part1 } = require('../../src/2020/2.js')
+const { part1 } = require('../../src/2020/02')
 
 describe('check passwords', () => {
   describe('part 1', () => {
