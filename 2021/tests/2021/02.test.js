@@ -1,7 +1,7 @@
 const { linesOf, readPuzzleInput } = require('../../src/utils')
 const { part1, part2 } = require('../../src/2021/02')
 
-describe('2020 day 2', () => {
+describe('2021 day 2', () => {
   const example = `\
 forward 5
 down 5
