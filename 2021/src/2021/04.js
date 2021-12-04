@@ -22,7 +22,7 @@ const solve = (input, winnerDetectionStrategy) => {
 
   const results = play(boards, drawnNumbers)
   const [numbersDrawnUntilWin, [firstWinnerInRound]] = winnerDetectionStrategy(results)
-  return sumOfCells(firstWinnerInRound.allUnmarkedCells(numbersDrawnUntilWin)) * numbersDrawnUntilWin.slice(-1)[0]
+  return sumOfCells(firstWinnerInRound.allUnmarkedCells(numbersDrawnUntilWin)) * numbersDrawnUntilWin.reverse()[0]
 }
 
 const play = (boards, drawnNumbers) => {
