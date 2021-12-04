@@ -1,4 +1,14 @@
 const part1 = input => {
+  return solve(input,
+    results => results.find(round => round[1].length > 0))
+}
+
+const part2 = input => {
+  return solve(input,
+    results => results.reverse().find(round => round[1].length > 0))
+}
+
+const solve = (input, winnerDetectionStrategy) => {
   const inputs = input
     .split('\n\n')
     .map(line => line.trim())
@@ -10,16 +20,30 @@ const part1 = input => {
     .split(',')
     .map(number => Number(number))
 
-  const round = []
+  const results = play(boards, drawnNumbers)
+  const [numbersDrawnUntilWin, [firstWinnerInRound]] = winnerDetectionStrategy(results)
+  return sumOfCells(firstWinnerInRound.allUnmarkedCells(numbersDrawnUntilWin)) * numbersDrawnUntilWin.slice(-1)[0]
+}
+
+const play = (boards, drawnNumbers) => {
+  const results = []
+
+  let boardsInPlay = boards
+  let round = []
   for (const drawnNumber of drawnNumbers) {
-    round.push(drawnNumber)
-    const winner = boards.find(board => board.hasWon(round))
-    if (winner) {
-      return sumOfCells(winner.allUnmarkedCells(round)) * drawnNumber
-    }
+    round = [...round, drawnNumber]
+
+    const winners = winnersOfRound(boardsInPlay, round)
+    results.push([round, winners])
+
+    boardsInPlay = boardsInPlay.filter(board => !winners.includes(board))
   }
 
-  throw new Error('No winner found')
+  return results
+}
+
+const winnersOfRound = (boards, drawnNumbers) => {
+  return boards.filter(board => board.hasWon(drawnNumbers))
 }
 
 const sumOfCells = cells => {
@@ -43,10 +67,10 @@ class Board {
 
   get columns () {
     const columns = []
-    for (let rowIndex = 0; rowIndex < this.rows.length; rowIndex++) {
-      const row = this.rows[rowIndex]
+    for (const row of this.rows) {
       for (let colIndex = 0; colIndex < row.length; colIndex++) {
-        (columns[colIndex] = columns[colIndex] || []).push(row[colIndex])
+        const column = columns[colIndex] || []
+        columns[colIndex] = column.concat(row[colIndex])
       }
     }
     return columns
@@ -71,4 +95,4 @@ class Board {
   }
 }
 
-module.exports = { part1 }
+module.exports = { part1, part2 }

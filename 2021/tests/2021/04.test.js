@@ -1,5 +1,5 @@
 const { readPuzzleInput } = require('../../src/utils')
-const { part1 } = require('../../src/2021/04')
+const { part1, part2 } = require('../../src/2021/04')
 
 describe('2021 day 4', () => {
   const example = `\
@@ -38,6 +38,24 @@ describe('2021 day 4', () => {
       const result = part1(input)
 
       expect(result).toBe(21607)
+    })
+  })
+
+  describe('part 2', () => {
+    it('should solve example', () => {
+      const input = example
+
+      const result = part2(input)
+
+      expect(result).toBe(1924)
+    })
+
+    it('should solve my input', () => {
+      const input = readPuzzleInput(2021, 4, 1)
+
+      const result = part2(input)
+
+      expect(result).toBe(19012)
     })
   })
 })
