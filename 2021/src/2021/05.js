@@ -1,6 +1,6 @@
 const part1 = lineSegments => {
   const lines = toLines(lineSegments)
-    .filter(([first, second]) => isHorizontal(first, second) || isVertical(first, second))
+    .filter(line => !line.isDiagonal)
 
   return solve(lines)
 }
@@ -18,14 +18,13 @@ const solve = lines => {
 }
 
 const overlappingPointsOf = diagram => {
-  return Object.entries(diagram)
-    .map(([_, numberOfLinesThroughPoint]) => numberOfLinesThroughPoint)
+  return Object.values(diagram)
     .filter(numberOfLinesThroughPoint => numberOfLinesThroughPoint > 1)
 }
 
 const toDiagram = lines => {
   return lines
-    .flatMap(line => line)
+    .flatMap(line => line.points)
     .reduce((result, point) => {
       result[point] = (result[point] || 0) + 1
       return result
@@ -35,32 +34,49 @@ const toDiagram = lines => {
 const toLines = lineSegments => {
   return lineSegments
     .map(toLineSegment)
-    .map(toLine)
+    .map(([start, end]) => new Line(start, end))
 }
 
-const toLine = ([p1, p2]) => {
-  if (isVertical(p1, p2)) {
-    const [[x, y1], [, y2]] = [p1, p2]
-    return range(y1, y2).map(y => [x, y])
-  } else if (isHorizontal(p1, p2)) {
-    const [[x1, y], [x2]] = [p1, p2]
-    return range(x1, x2).map(x => [x, y])
-  } else {
-    // is diagonal
-    const [[x1, y1], [x2, y2]] = [p1, p2]
+const toLineSegment = input => {
+  return input
+    .split(' -> ')
+    .map(point => point.split(','))
+    .map(([x, y]) => [Number(x), Number(y)])
+}
 
-    const yc = range(y1, y2)
-
-    return range(x1, x2).map((x, i) => [x, yc[i]])
+class Line {
+  constructor (start, end) {
+    this.start = start
+    this.end = end
   }
-}
 
-const isVertical = ([x1], [x2]) => {
-  return x1 === x2
-}
+  get isDiagonal () {
+    return !this.isHorizontal && !this.isVertical
+  }
 
-const isHorizontal = ([, y1], [, y2]) => {
-  return y1 === y2
+  get isHorizontal () {
+    const [[, y1], [, y2]] = [this.start, this.end]
+    return y1 === y2
+  }
+
+  get isVertical () {
+    const [[x1], [x2]] = [this.start, this.end]
+    return x1 === x2
+  }
+
+  get points () {
+    if (this.isHorizontal) {
+      const [[x1, y], [x2]] = [this.start, this.end]
+      return range(x1, x2).map(x => [x, y])
+    } else if (this.isVertical) {
+      const [[x, y1], [, y2]] = [this.start, this.end]
+      return range(y1, y2).map(y => [x, y])
+    } else { // diagonal
+      const [[x1, y1], [x2, y2]] = [this.start, this.end]
+      const yc = range(y1, y2)
+      return range(x1, x2).map((x, i) => [x, yc[i]])
+    }
+  }
 }
 
 const range = (start, end) => {
@@ -75,13 +91,6 @@ const range = (start, end) => {
     }
   }
   return result
-}
-
-const toLineSegment = input => {
-  return input
-    .split(' -> ')
-    .map(point => point.split(','))
-    .map(([x, y]) => [Number(x), Number(y)])
 }
 
 module.exports = { part1, part2 }
