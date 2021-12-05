@@ -1,5 +1,5 @@
 const { linesOf, readPuzzleInput } = require('../../src/utils')
-const { part1 } = require('../../src/2021/05')
+const { part1, part2 } = require('../../src/2021/05')
 
 describe('2021 day 5', () => {
   const example = `\
@@ -29,6 +29,24 @@ describe('2021 day 5', () => {
       const result = part1(input)
 
       expect(result).toBe(4421)
+    })
+  })
+
+  describe('part 2', () => {
+    it('should solve example', () => {
+      const input = linesOf(example)
+
+      const result = part2(input)
+
+      expect(result).toBe(12)
+    })
+
+    it('should solve my input', () => {
+      const input = linesOf(readPuzzleInput(2021, 5))
+
+      const result = part2(input)
+
+      expect(result).toBe(18674)
     })
   })
 })

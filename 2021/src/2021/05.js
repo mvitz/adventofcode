@@ -1,34 +1,77 @@
 const part1 = lineSegments => {
-  const lines = lineSegments
-    .map(toLineSegment)
-    .map(toLine)
+  const lines = toLines(lineSegments)
+    .filter(([first, second]) => isHorizontal(first, second) || isVertical(first, second))
 
-  const diagram = lines
+  return solve(lines)
+}
+
+const part2 = lineSegments => {
+  const lines = toLines(lineSegments)
+
+  return solve(lines)
+}
+
+const solve = lines => {
+  const diagram = toDiagram(lines)
+
+  return overlappingPointsOf(diagram).length
+}
+
+const overlappingPointsOf = diagram => {
+  return Object.entries(diagram)
+    .map(([_, numberOfLinesThroughPoint]) => numberOfLinesThroughPoint)
+    .filter(numberOfLinesThroughPoint => numberOfLinesThroughPoint > 1)
+}
+
+const toDiagram = lines => {
+  return lines
     .flatMap(line => line)
     .reduce((result, point) => {
       result[point] = (result[point] || 0) + 1
       return result
     }, {})
-
-  return Object.entries(diagram)
-    .map(([_, numberOfLinesThroughPoint]) => numberOfLinesThroughPoint)
-    .filter(numberOfLinesThroughPoint => numberOfLinesThroughPoint > 1)
-    .length
 }
 
-const toLine = ([[x1, y1], [x2, y2]]) => {
+const toLines = lineSegments => {
+  return lineSegments
+    .map(toLineSegment)
+    .map(toLine)
+}
+
+const toLine = ([p1, p2]) => {
+  if (isVertical(p1, p2)) {
+    const [[x, y1], [, y2]] = [p1, p2]
+    return range(y1, y2).map(y => [x, y])
+  } else if (isHorizontal(p1, p2)) {
+    const [[x1, y], [x2]] = [p1, p2]
+    return range(x1, x2).map(x => [x, y])
+  } else {
+    // is diagonal
+    const [[x1, y1], [x2, y2]] = [p1, p2]
+
+    const yc = range(y1, y2)
+
+    return range(x1, x2).map((x, i) => [x, yc[i]])
+  }
+}
+
+const isVertical = ([x1], [x2]) => {
+  return x1 === x2
+}
+
+const isHorizontal = ([, y1], [, y2]) => {
+  return y1 === y2
+}
+
+const range = (start, end) => {
   const result = []
-  if (x1 === x2) {
-    // vertical line
-    const [start, end] = [y1, y2].sort((a, b) => a - b)
+  if (start < end) {
     for (let i = start; i <= end; i++) {
-      result.push([x1, i])
+      result.push(i)
     }
-  } else if (y1 === y2) {
-    // horizontal line
-    const [start, end] = [x1, x2].sort((a, b) => a - b)
-    for (let i = start; i <= end; i++) {
-      result.push([i, y1])
+  } else {
+    for (let i = start; i >= end; i--) {
+      result.push(i)
     }
   }
   return result
@@ -41,4 +84,4 @@ const toLineSegment = input => {
     .map(([x, y]) => [Number(x), Number(y)])
 }
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
