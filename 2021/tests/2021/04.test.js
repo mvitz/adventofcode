@@ -33,7 +33,7 @@ describe('2021 day 4', () => {
     })
 
     it('should solve my input', () => {
-      const input = readPuzzleInput(2021, 4, 1)
+      const input = readPuzzleInput(2021, 4)
 
       const result = part1(input)
 
@@ -51,7 +51,7 @@ describe('2021 day 4', () => {
     })
 
     it('should solve my input', () => {
-      const input = readPuzzleInput(2021, 4, 1)
+      const input = readPuzzleInput(2021, 4)
 
       const result = part2(input)
 

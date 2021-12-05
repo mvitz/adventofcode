@@ -1,9 +1,9 @@
 const fs = require('fs')
 const path = require('path')
 
-const readPuzzleInput = (year, day, part) => {
+const readPuzzleInput = (year, day) => {
   return fs
-    .readFileSync(path.resolve(__dirname, `${year}/${('0' + day).slice(-2)}-${part}.txt`))
+    .readFileSync(path.resolve(__dirname, `${year}/${('0' + day).slice(-2)}.txt`))
     .toString()
 }
 

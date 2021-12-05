@@ -20,7 +20,7 @@ forward 2`
     })
 
     it('should solve my input', () => {
-      const input = linesOf(readPuzzleInput(2021, 2, 1))
+      const input = linesOf(readPuzzleInput(2021, 2))
 
       const result = part1(input)
 
@@ -38,7 +38,7 @@ forward 2`
     })
 
     it('should solve my input', () => {
-      const input = linesOf(readPuzzleInput(2021, 2, 1))
+      const input = linesOf(readPuzzleInput(2021, 2))
 
       const result = part2(input)
 

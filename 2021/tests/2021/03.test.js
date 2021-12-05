@@ -26,7 +26,7 @@ describe('2021 day 3', () => {
     })
 
     it('should solve my input', () => {
-      const input = linesOf(readPuzzleInput(2021, 3, 1))
+      const input = linesOf(readPuzzleInput(2021, 3))
 
       const result = part1(input)
 
@@ -44,7 +44,7 @@ describe('2021 day 3', () => {
     })
 
     it('should solve my input', () => {
-      const input = linesOf(readPuzzleInput(2021, 3, 1))
+      const input = linesOf(readPuzzleInput(2021, 3))
 
       const result = part2(input)
 
