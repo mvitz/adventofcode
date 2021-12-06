@@ -1,28 +1,51 @@
 const part1 = input => {
+  return solve(input, 80)
+}
+
+const part2 = input => {
+  return solve(input, 256)
+}
+
+const solve = (input, days) => {
   const sea = input.split(',')
     .map(age => Number(age))
-    .map(age => new Laternfish(age))
+    .reduce((sea, fish) => sea.add(fish), new Sea())
 
-  for (let day = 0; day < 80; day++) {
-    sea.forEach(fish => fish.nextDay(sea))
+  for (let day = 0; day < days; day++) {
+    sea.nextDay()
   }
 
-  return sea.length
+  return sea.populationSize
 }
 
-class Laternfish {
-  constructor (initialAge) {
-    this.age = initialAge
+class Sea {
+  constructor () {
+    this.population = [0, 0, 0, 0, 0, 0, 0, 0, 0]
   }
 
-  nextDay (sea) {
-    if (this.age === 0) {
-      sea.push(new Laternfish(8))
-      this.age = 6
-    } else {
-      this.age--
-    }
+  add (fish) {
+    this.population[fish]++
+    return this
+  }
+
+  nextDay () {
+    this.population = [
+      this.population[1],
+      this.population[2],
+      this.population[3],
+      this.population[4],
+      this.population[5],
+      this.population[6],
+      this.population[7] + this.population[0],
+      this.population[8],
+      this.population[0]
+    ]
+  }
+
+  get populationSize () {
+    return this.population
+      .reduce((sum, fishByAge) => sum + fishByAge, 0)
   }
 }
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
