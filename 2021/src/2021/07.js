@@ -1,4 +1,12 @@
 const part1 = input => {
+  return solve(input, (crab, pos) => Math.abs(crab - pos))
+}
+
+const part2 = input => {
+  return solve(input, (crab, pos) => fact(Math.abs(crab - pos)))
+}
+
+const solve = (input, fuelStrategy) => {
   const crabs = input.split(',')
     .map(position => Number(position))
     .sort((a, b) => a - b)
@@ -7,13 +15,13 @@ const part1 = input => {
   const max = crabs.reverse()[0]
 
   const allSolutions = []
-  for (let i = min; i <= max; i++) {
-    const fuelUsed = crabs.map(crab => Math.abs(crab - i))
+  for (let pos = min; pos <= max; pos++) {
+    const fuelUsed = crabs.map(crab => fuelStrategy(crab, pos))
       .reduce((sum, fuel) => sum + fuel, 0)
-    allSolutions.push({ pos: i, fuelUsed })
+    allSolutions.push({ pos, fuelUsed })
   }
 
-  const result = allSolutions.reduce((solution, candidate) => {
+  const { fuelUsed } = allSolutions.reduce((solution, candidate) => {
     if (candidate.fuelUsed < solution.fuelUsed) {
       return candidate
     } else {
@@ -21,7 +29,15 @@ const part1 = input => {
     }
   }, { fuelUsed: Number.POSITIVE_INFINITY })
 
-  return result.fuelUsed
+  return fuelUsed
 }
 
-module.exports = { part1 }
+const fact = number => {
+  let result = 0
+  for (let i = 1; i <= number; i++) {
+    result += i
+  }
+  return result
+}
+
+module.exports = { part1, part2 }
