@@ -1,9 +1,11 @@
 const part1 = input => {
-  return solve(input, (crab, pos) => Math.abs(crab - pos))
+  return solve(input,
+    (crab, pos) => Math.abs(crab - pos))
 }
 
 const part2 = input => {
-  return solve(input, (crab, pos) => sumOfNumbersUpTo(Math.abs(crab - pos)))
+  return solve(input,
+    (crab, pos) => sumOfNumbersUpTo(Math.abs(crab - pos)))
 }
 
 const solve = (input, fuelStrategy) => {
