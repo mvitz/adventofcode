@@ -32,21 +32,7 @@ const solve = (input, fuelStrategy) => {
   return fuelUsed
 }
 
-const sumCache = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55]
-
-const sumOfNumbersUpTo = number => {
-  if (sumCache.length >= number) {
-    return sumCache[number]
-  }
-
-  const lastCachedNumber = sumCache.length - 1
-
-  let result = sumCache[lastCachedNumber]
-  for (let i = lastCachedNumber + 1; i <= number; i++) {
-    result += i
-    sumCache.push(result)
-  }
-  return result
-}
+// gauss summation
+const sumOfNumbersUpTo = number => (number * (number + 1)) / 2
 
 module.exports = { part1, part2 }
