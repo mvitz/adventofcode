@@ -32,10 +32,19 @@ const solve = (input, fuelStrategy) => {
   return fuelUsed
 }
 
+const factCache = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55]
+
 const fact = number => {
-  let result = 0
-  for (let i = 1; i <= number; i++) {
+  if (factCache.length >= number) {
+    return factCache[number]
+  }
+
+  const lastCachedNumber = factCache.length - 1
+
+  let result = factCache[lastCachedNumber]
+  for (let i = lastCachedNumber + 1; i <= number; i++) {
     result += i
+    factCache.push(result)
   }
   return result
 }
