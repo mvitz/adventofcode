@@ -3,7 +3,7 @@ const part1 = input => {
 }
 
 const part2 = input => {
-  return solve(input, (crab, pos) => fact(Math.abs(crab - pos)))
+  return solve(input, (crab, pos) => sumOfNumbersUpTo(Math.abs(crab - pos)))
 }
 
 const solve = (input, fuelStrategy) => {
@@ -32,19 +32,19 @@ const solve = (input, fuelStrategy) => {
   return fuelUsed
 }
 
-const factCache = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55]
+const sumCache = [0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55]
 
-const fact = number => {
-  if (factCache.length >= number) {
-    return factCache[number]
+const sumOfNumbersUpTo = number => {
+  if (sumCache.length >= number) {
+    return sumCache[number]
   }
 
-  const lastCachedNumber = factCache.length - 1
+  const lastCachedNumber = sumCache.length - 1
 
-  let result = factCache[lastCachedNumber]
+  let result = sumCache[lastCachedNumber]
   for (let i = lastCachedNumber + 1; i <= number; i++) {
     result += i
-    factCache.push(result)
+    sumCache.push(result)
   }
   return result
 }
