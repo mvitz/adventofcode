@@ -41,7 +41,7 @@ gcafb gcf dcaebfg ecagb gf abcdeg gaef cafbge fdbac fegbdc | fgae cfgab fg bagce
       expect(result).toBe(5353)
     })
 
-    it('should solve simple example', () => {
+    it('should solve example', () => {
       const input = linesOf(example)
 
       const result = part2(input)

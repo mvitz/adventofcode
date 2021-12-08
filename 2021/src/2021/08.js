@@ -1,120 +1,113 @@
 const part1 = input => {
-  const isOneFourSevenOrEight = digit =>
-    [ONE, FOUR, SEVEN, EIGHT].some(d => d.maybe(digit))
-
   return input
-    .map(entry => parseEntry(entry))
-    .flatMap(([, output]) => output)
+    .map(parseEntry)
+    .flatMap(([, outputValueDigits]) => outputValueDigits)
     .filter(isOneFourSevenOrEight)
     .length
 }
 
 const part2 = input => {
   return input
-    .map(entry => decodeEntry(entry))
-    .reduce((sum, number) => sum + number)
+    .map(parseEntry)
+    .map(decodeEntry)
+    .reduce(sum)
 }
 
-const decodeEntry = entry => {
-  const [patterns, output] = parseEntry(entry)
+const parseEntry = entry => entry
+  .split(' | ')
+  .map(parseDigits)
 
-  const segmentMappings = decodePatterns(patterns)
+const parseDigits = digits => digits
+  .split(' ')
+  .map(parseDigit)
 
-  return Number(output
-    .map(digit => digit.map(segment => segmentMappings[segment]))
-    .flatMap(decodedDigit => DIGITS.find(digit => digit.is(decodedDigit)))
-    .map(digit => `${digit.value}`)
-    .join(''))
+const parseDigit = digit => digit
+  .split('')
+  .sort()
+
+const isOneFourSevenOrEight = digit =>
+  isOne(digit) || isFour(digit) || isSeven(digit) || isEight(digit)
+
+const isOne = digit => digit.length === 2
+
+const isFour = digit => digit.length === 4
+
+const isSeven = digit => digit.length === 3
+
+const isEight = digit => digit.length === 7
+
+const decodeEntry = ([signalPatternDigits, outputValueDigits]) => {
+  const digits = decodePatterns(signalPatternDigits)
+  const decodedOutputDigits = decodeDigits(outputValueDigits, digits)
+  return toNumber(decodedOutputDigits)
 }
 
-const parseEntry = entry => {
-  const [patterns, output] = entry.split(' | ')
-  return [
-    patterns.split(' ').map(toWireSegments),
-    output.split(' ').map(toWireSegments)
-  ]
-}
+const decodePatterns = signalPatternDigits => {
+  const one = signalPatternDigits
+    .find(isOne)
+  const four = signalPatternDigits
+    .find(isFour)
+  const seven = signalPatternDigits
+    .find(isSeven)
+  const eight = signalPatternDigits
+    .find(isEight)
+  const three = signalPatternDigits
+    .find(digit => isThree(digit, one))
+  const six = signalPatternDigits
+    .find(digit => isSix(digit, one))
+  const nine = signalPatternDigits
+    .find(digit => isNine(digit, three))
+  const zero = signalPatternDigits
+    .find(digit => isZero(digit, six, nine))
+  const five = signalPatternDigits
+    .find(digit => isFive(digit, six))
+  const two = signalPatternDigits
+    .find(digit => isTwo(digit, three, five))
 
-const decodePatterns = patterns => {
-  const [one] = find(ONE, patterns)
-  const [four] = find(FOUR, patterns)
-  const [seven] = find(SEVEN, patterns)
-  const [eight] = find(EIGHT, patterns)
-
-  const [a] = differenceOf(seven, one)
-
-  const [six] = find(SIX, patterns)
-    .filter(maybeSix => intersectionOf(one, maybeSix).length === 1)
-
-  const [f] = intersectionOf(one, six)
-  const [c] = one.filter(segment => segment !== f)
-
-  const [three] = find(THREE, patterns)
-    .filter(maybeThree => intersectionOf(seven, maybeThree).length === 3)
-
-  const [d] = differenceOf(intersectionOf(three, four), one)
-
-  const [b] = differenceOf(four, [c, d, f])
-
-  const [zero] = find(ZERO, patterns)
-    .filter(maybeZero => intersectionOf([d], maybeZero).length === 0)
-
-  const [e] = differenceOf(zero, three)
-    .filter(maybeE => maybeE !== b)
-
-  const [g] = differenceOf(eight, [a, b, c, d, e, f])
-
-  return { [a]: 'a', [b]: 'b', [c]: 'c', [d]: 'd', [e]: 'e', [f]: 'f', [g]: 'g' }
-}
-
-const intersectionOf = (a, b) => {
-  return a.filter(x => b.includes(x))
-}
-
-const differenceOf = (a, b) => {
-  return a.filter(x => !b.includes(x))
-}
-
-const find = (digit, patterns) => {
-  return patterns.filter(pattern => digit.maybe(pattern))
-}
-
-const toWireSegments = input => {
-  return input.split('').sort()
-}
-
-class Digit {
-  constructor (value, segments) {
-    this.value = value
-    this.segments = segments
-  }
-
-  get numberOfSegments () {
-    return this.segments.length
-  }
-
-  maybe (segments) {
-    return segments.length === this.numberOfSegments
-  }
-
-  is (segments) {
-    return this.maybe(segments) &&
-      intersectionOf(this.segments, segments).length === this.numberOfSegments
+  return {
+    [zero]: 0,
+    [one]: 1,
+    [two]: 2,
+    [three]: 3,
+    [four]: 4,
+    [five]: 5,
+    [six]: 6,
+    [seven]: 7,
+    [eight]: 8,
+    [nine]: 9
   }
 }
 
-// move to static properties once I'm able to update eslint to 8.x
-const ZERO = new Digit(0, ['a', 'b', 'c', 'e', 'f', 'g'])
-const ONE = new Digit(1, ['c', 'f'])
-const TWO = new Digit(2, ['a', 'c', 'd', 'e', 'g'])
-const THREE = new Digit(3, ['a', 'c', 'd', 'f', 'g'])
-const FOUR = new Digit(4, ['b', 'c', 'd', 'f'])
-const FIVE = new Digit(5, ['a', 'b', 'd', 'f', 'g'])
-const SIX = new Digit(6, ['a', 'b', 'd', 'e', 'f', 'g'])
-const SEVEN = new Digit(7, ['a', 'c', 'f'])
-const EIGHT = new Digit(8, ['a', 'b', 'c', 'd', 'e', 'f', 'g'])
-const NINE = new Digit(9, ['a', 'b', 'c', 'd', 'f', 'g'])
+const isZeroSixOrNine = digit => digit.length === 6
 
-const DIGITS = [ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE]
+const isTwoThreeOrFive = digit => digit.length === 5
+
+const isZero = (digit, six, nine) =>
+  isZeroSixOrNine(digit) && digit !== six && digit !== nine
+
+const isTwo = (digit, three, five) =>
+  isTwoThreeOrFive(digit) && digit !== three && digit !== five
+
+const isThree = (digit, one) =>
+  isTwoThreeOrFive(digit) && commonSegmentsOf(digit, one).length === 2
+
+const isFive = (digit, six) =>
+  isTwoThreeOrFive(digit) && commonSegmentsOf(digit, six).length === 5
+
+const isSix = (digit, one) =>
+  isZeroSixOrNine(digit) && commonSegmentsOf(digit, one).length === 1
+
+const isNine = (digit, three) =>
+  isZeroSixOrNine(digit) && commonSegmentsOf(digit, three).length === 5
+
+const commonSegmentsOf = (first, second) =>
+  first.filter(segment => second.includes(segment))
+
+const decodeDigits = (digits, alphabet) => digits
+  .map(digit => alphabet[digit])
+
+const toNumber = digits => Number(digits.join(''))
+
+const sum = (result, digit) => result + digit
 
 module.exports = { part1, part2 }
