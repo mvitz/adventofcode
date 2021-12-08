@@ -1,17 +1,17 @@
 const part1 = input => {
+  const isOneFourSevenOrEight = digit =>
+    [ONE, FOUR, SEVEN, EIGHT].some(d => d.numberOfSegments === digit.length)
+
   return input
-    .map(entry => entry.split(' | '))
-    .flatMap(([, outputValue]) => outputValue.split(' '))
-    .filter(digit => [
-      ONE.numberOfSegments,
-      FOUR.numberOfSegments,
-      SEVEN.numberOfSegments,
-      EIGHT.numberOfSegments].includes(digit.length))
+    .map(entry => parseEntry(entry))
+    .flatMap(([, output]) => output)
+    .filter(isOneFourSevenOrEight)
     .length
 }
 
 const part2 = input => {
-  return input.map(entry => decodeEntry(entry))
+  return input
+    .map(entry => decodeEntry(entry))
     .reduce((sum, number) => sum + number)
 }
 
