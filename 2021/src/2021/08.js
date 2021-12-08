@@ -3,24 +3,27 @@ const part1 = input => {
     .map(entry => entry.split(' | '))
     .flatMap(([, outputValue]) => outputValue.split(' '))
     .filter(digit => [
-      NUMBER_OF_SEGMENTS_USED.ONE,
-      NUMBER_OF_SEGMENTS_USED.FOUR,
-      NUMBER_OF_SEGMENTS_USED.SEVEN,
-      NUMBER_OF_SEGMENTS_USED.EIGHT].includes(digit.length))
+      ONE.numberOfSegments,
+      FOUR.numberOfSegments,
+      SEVEN.numberOfSegments,
+      EIGHT.numberOfSegments].includes(digit.length))
     .length
 }
 
-const NUMBER_OF_SEGMENTS_USED = Object.freeze({
-  ZERO: 6,
-  ONE: 2,
-  TWO: 5,
-  THREE: 5,
-  FOUR: 4,
-  FIVE: 5,
-  SIX: 6,
-  SEVEN: 3,
-  EIGHT: 7,
-  NINE: 6
-})
+class Digit {
+  constructor (segments) {
+    this.segments = segments
+  }
+
+  get numberOfSegments () {
+    return this.segments.length
+  }
+}
+
+// move to static properties once I'm able to update eslint to 8.x
+const ONE = new Digit(['c', 'f'])
+const FOUR = new Digit(['b', 'c', 'd', 'f'])
+const SEVEN = new Digit(['a', 'c', 'f'])
+const EIGHT = new Digit(['a', 'b', 'c', 'd', 'e', 'f', 'g'])
 
 module.exports = { part1 }
