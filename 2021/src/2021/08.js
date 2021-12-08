@@ -1,6 +1,6 @@
 const part1 = input => {
   const isOneFourSevenOrEight = digit =>
-    [ONE, FOUR, SEVEN, EIGHT].some(d => d.numberOfSegments === digit.length)
+    [ONE, FOUR, SEVEN, EIGHT].some(d => d.maybe(digit))
 
   return input
     .map(entry => parseEntry(entry))
@@ -22,10 +22,9 @@ const decodeEntry = entry => {
 
   return Number(output
     .map(digit => digit.map(segment => segmentMappings[segment]))
-    .flatMap(decodedDigit => DIGITS.find(digit => digit.matches(decodedDigit)))
-    .map(digit => digit.value)
-    .map(digit => `${digit}`)
-    .reduce((result, digit) => result + digit, ''))
+    .flatMap(decodedDigit => DIGITS.find(digit => digit.is(decodedDigit)))
+    .map(digit => `${digit.value}`)
+    .join(''))
 }
 
 const parseEntry = entry => {
@@ -77,7 +76,7 @@ const differenceOf = (a, b) => {
 }
 
 const find = (digit, patterns) => {
-  return patterns.filter(pattern => pattern.length === digit.numberOfSegments)
+  return patterns.filter(pattern => digit.maybe(pattern))
 }
 
 const toWireSegments = input => {
@@ -94,9 +93,13 @@ class Digit {
     return this.segments.length
   }
 
-  matches (segments) {
-    return this.numberOfSegments === segments.length &&
-      this.numberOfSegments === intersectionOf(this.segments, segments).length
+  maybe (segments) {
+    return segments.length === this.numberOfSegments
+  }
+
+  is (segments) {
+    return this.maybe(segments) &&
+      intersectionOf(this.segments, segments).length === this.numberOfSegments
   }
 }
 
