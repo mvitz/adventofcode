@@ -14,7 +14,7 @@ const part2 = input => {
     .basins
     .sort((first, second) => second.length - first.length)
     .slice(0, 3)
-    .map(a => a.length)
+    .map(basin => basin.length)
     .reduce(product)
 }
 
