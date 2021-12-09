@@ -1,10 +1,9 @@
 const { linesOf } = require('../utils')
 
 const part1 = input => {
-  const heightmap = Heightmap.parseHeightmap(input)
-  return heightmap
-    .locations
-    .filter(location => heightmap.isLowPoint(location))
+  return Heightmap
+    .parseHeightmap(input)
+    .lowPoints
     .map(riskLevel)
     .reduce(sum)
 }
@@ -28,6 +27,11 @@ class Location {
 class Heightmap {
   constructor (locations) {
     this.rows = locations
+  }
+
+  get lowPoints () {
+    return this.locations
+      .filter(location => this.isLowPoint(location))
   }
 
   get locations () {
