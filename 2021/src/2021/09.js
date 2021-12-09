@@ -46,20 +46,24 @@ class Heightmap {
   }
 
   get basins () {
-    const basins = []
-    for (const lowPoint of this.lowPoints) {
-      const basin = []
-      let a = [lowPoint]
-      do {
-        basin.push(...new Set(a))
-        a = a
-          .flatMap(location => this.adjacentLocationsOf(location))
-          .filter(({ height }) => height < 9)
-          .filter(location => !basin.includes(location))
-      } while (a.length > 0)
-      basins.push(basin)
+    return this
+      .lowPoints
+      .map(lowPoint => this.basinFrom(lowPoint))
+  }
+
+  basinFrom (lowPoint) {
+    const basin = []
+
+    let basinAdjacentPoints = [lowPoint]
+    while (basinAdjacentPoints.length) {
+      basin.push(...new Set(basinAdjacentPoints))
+      basinAdjacentPoints = basinAdjacentPoints
+        .flatMap(location => this.adjacentLocationsOf(location))
+        .filter(({ height }) => height < 9)
+        .filter(location => !basin.includes(location))
     }
-    return basins
+
+    return basin
   }
 
   get locations () {
