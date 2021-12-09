@@ -8,9 +8,20 @@ const part1 = input => {
     .reduce(sum)
 }
 
+const part2 = input => {
+  return Heightmap
+    .parseHeightmap(input)
+    .basins
+    .sort((first, second) => second.length - first.length)
+    .slice(0, 3)
+    .map(a => a.length)
+    .reduce(product)
+}
+
 const riskLevel = ({ height }) => 1 + height
 
 const sum = (result, number) => result + number
+const product = (result, number) => result * number
 
 class Location {
   constructor (x, y, height) {
@@ -32,6 +43,23 @@ class Heightmap {
   get lowPoints () {
     return this.locations
       .filter(location => this.isLowPoint(location))
+  }
+
+  get basins () {
+    const basins = []
+    for (const lowPoint of this.lowPoints) {
+      const basin = []
+      let a = [lowPoint]
+      do {
+        basin.push(...new Set(a))
+        a = a
+          .flatMap(location => this.adjacentLocationsOf(location))
+          .filter(({ height }) => height < 9)
+          .filter(location => !basin.includes(location))
+      } while (a.length > 0)
+      basins.push(basin)
+    }
+    return basins
   }
 
   get locations () {
@@ -85,4 +113,4 @@ class Heightmap {
   }
 }
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
