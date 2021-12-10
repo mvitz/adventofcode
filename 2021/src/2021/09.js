@@ -85,6 +85,7 @@ class Heightmap {
     if (x > 0) { // has left adjacent location
       adjacentLocations.push(this.location(x - 1, y))
     }
+
     if (x + 1 < this.width) { // has right adjacent location
       adjacentLocations.push(this.location(x + 1, y))
     }
