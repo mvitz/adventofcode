@@ -1,9 +1,10 @@
 const { linesOf } = require('../utils')
 
 const part1 = navigationSubsystem => {
+  const corruptedLine = line => !!findFirstIllegalCharacterIn(line)
+
   return linesOf(navigationSubsystem)
-    .map(line => findFirstIllegalCharacterIn(line))
-    .filter(firstIllegalCharacterInLine => !!firstIllegalCharacterInLine)
+    .filter(corruptedLine)
     .map(toLineScore)
     .reduce(sum)
 }
@@ -46,10 +47,7 @@ const fixIncompleteLine = line => {
     if (openToken > -1) {
       stack.push(openToken)
     } else {
-      const closeToken = [')', ']', '}', '>'].findIndex(t => t === token)
-      if (closeToken > -1) {
-        stack.pop()
-      }
+      stack.pop()
     }
   }
 
