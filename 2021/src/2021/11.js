@@ -4,10 +4,20 @@ const part1 = input => {
   const cavern = Cavern.parseCavern(input)
 
   let numberOfFlashes = 0
-  for (let step = 0; step < 100; step++) {
+  for (let step = 1; step < 101; step++) {
     numberOfFlashes += cavern.nextStep()
   }
   return numberOfFlashes
+}
+
+const part2 = input => {
+  const cavern = Cavern.parseCavern(input)
+
+  let step = 1
+  while (cavern.octopuses.length !== cavern.nextStep()) {
+    step++
+  }
+  return step
 }
 
 class Octopus {
@@ -101,4 +111,4 @@ class Cavern {
   }
 }
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
