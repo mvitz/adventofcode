@@ -1,9 +1,10 @@
 const { linesOf } = require('../utils')
 
 const part1 = navigationSubsystem => {
-  const corruptedLine = line => !!findFirstIllegalCharacterIn(line)
+  const corruptedLine = firstIllegalCharacterInLine => !!firstIllegalCharacterInLine
 
   return linesOf(navigationSubsystem)
+    .map(line => findFirstIllegalCharacterIn(line))
     .filter(corruptedLine)
     .map(toLineScore)
     .reduce(sum)
