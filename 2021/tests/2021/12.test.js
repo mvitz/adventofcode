@@ -1,5 +1,5 @@
 const { readPuzzleInput } = require('../../src/utils')
-const { part1 } = require('../../src/2021/12')
+const { part1, part2 } = require('../../src/2021/12')
 
 describe('2021 day 12', () => {
   const example = `\
@@ -11,17 +11,7 @@ b-d
 A-end
 b-end`
 
-  describe('part 1', () => {
-    it('should solve example', () => {
-      const input = example
-
-      const result = part1(input)
-
-      expect(result).toBe(10)
-    })
-
-    it('should solve slightly larger example', () => {
-      const input = `\
+  const slightlyLargerExample = `\
 dc-end
 HN-start
 start-kj
@@ -33,13 +23,7 @@ kj-sa
 kj-HN
 kj-dc`
 
-      const result = part1(input)
-
-      expect(result).toBe(19)
-    })
-
-    it('should solve even larger example', () => {
-      const input = `\
+  const evenLargerExample = `\
 fs-end
 he-DX
 fs-he
@@ -59,6 +43,26 @@ zg-he
 pj-fs
 start-RW`
 
+  describe('part 1', () => {
+    it('should solve example', () => {
+      const input = example
+
+      const result = part1(input)
+
+      expect(result).toBe(10)
+    })
+
+    it('should solve slightly larger example', () => {
+      const input = slightlyLargerExample
+
+      const result = part1(input)
+
+      expect(result).toBe(19)
+    })
+
+    it('should solve even larger example', () => {
+      const input = evenLargerExample
+
       const result = part1(input)
 
       expect(result).toBe(226)
@@ -70,6 +74,40 @@ start-RW`
       const result = part1(input)
 
       expect(result).toBe(3450)
+    })
+  })
+
+  describe('part 2', () => {
+    it('should solve example', () => {
+      const input = example
+
+      const result = part2(input)
+
+      expect(result).toBe(36)
+    })
+
+    it('should solve slightly larger example', () => {
+      const input = slightlyLargerExample
+
+      const result = part2(input)
+
+      expect(result).toBe(103)
+    })
+
+    it('should solve even larger example', () => {
+      const input = evenLargerExample
+
+      const result = part2(input)
+
+      expect(result).toBe(3509)
+    })
+
+    it('should solve my input', () => {
+      const input = readPuzzleInput(2021, 12)
+
+      const result = part2(input)
+
+      expect(result).toBe(96528)
     })
   })
 })
