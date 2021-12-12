@@ -71,9 +71,11 @@ const parseConnection = line => line.split('-')
 
 const toCaveSystem = connections =>
   connections.reduce((caveSystem, [from, to]) => {
-    (caveSystem[from] = caveSystem[from] || []).push(to);
-    (caveSystem[to] = caveSystem[to] || []).push(from)
+    putMulti(caveSystem, from, to)
+    putMulti(caveSystem, to, from)
     return caveSystem
   }, {})
+
+const putMulti = (map, key, value) => (map[key] = map[key] || []).push(value)
 
 module.exports = { part1, part2 }
