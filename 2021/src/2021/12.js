@@ -1,29 +1,22 @@
 const { linesOf } = require('../utils')
 
+const START = 'start'
+const END = 'end'
+
 const part1 = input => {
   const connections = parseConnections(input)
   const isValidPath = smallCavesVisitedAtLeastOnce
 
-  return paths('start', 'end', connections, isValidPath).length
+  return paths(START, END, connections, isValidPath).length
 }
 
 const part2 = input => {
-  const start = 'start'
   const connections = parseConnections(input)
-  const isValidPath = path => {
-    const lastCave = path[path.length - 1]
-    if (lastCave === start) {
-      // start can only be visited exactly only once
-      return false
-    }
+  const isValidPath = path =>
+    atMostVisitedSingleSmallCaveTwice(path) &&
+      eachVisitedAtMostOnce(path, [START, END])
 
-    const visitedSmallCaves = path.filter(isSmallCave)
-    const uniqueVisitedSmallCaves = new Set(visitedSmallCaves).size
-    return visitedSmallCaves.length === uniqueVisitedSmallCaves || // no small cave visited twice
-      visitedSmallCaves.length === uniqueVisitedSmallCaves + 1 // single small cave visited twice
-  }
-
-  return paths(start, 'end', connections, isValidPath).length
+  return paths(START, END, connections, isValidPath).length
 }
 
 const paths = (from, to, connections, isValidPath, currentPath) => {
@@ -45,28 +38,42 @@ const paths = (from, to, connections, isValidPath, currentPath) => {
   if (nextPaths.length < 1) {
     return []
   } else {
-    return nextPaths.flatMap(nextPath => paths(from, to, connections, isValidPath, nextPath))
+    return nextPaths
+      .flatMap(nextPath => paths(from, to, connections, isValidPath, nextPath))
   }
 }
 
 const smallCavesVisitedAtLeastOnce = path => {
-  const visitedSmallCaves = path.filter(isSmallCave)
-  return visitedSmallCaves.length === new Set(visitedSmallCaves).size
+  const smallCavesInPath = path.filter(isSmallCave)
+  const visitedSmallCaves = new Set(smallCavesInPath)
+
+  return smallCavesInPath.length === visitedSmallCaves.size
 }
 
-const isSmallCave = cave => {
-  return /^[a-z]*$/.test(cave)
+const atMostVisitedSingleSmallCaveTwice = path => {
+  const smallCavesInPath = path.filter(isSmallCave)
+  const visitedSmallCaves = new Set(smallCavesInPath)
+
+  return smallCavesInPath.length === visitedSmallCaves.size || // no small cave visited twice
+    smallCavesInPath.length === (visitedSmallCaves.size + 1) // single small cave visited twice
 }
+
+const eachVisitedAtMostOnce = (path, caves) =>
+  new Set(path.filter(cave => caves.includes(cave))).size <= caves.length
+
+const isSmallCave = cave => /^[a-z]*$/.test(cave)
 
 const parseConnections = input =>
-  linesOf(input)
-    .map(parseConnection)
-    .reduce((result, [from, to]) => {
-      (result[from] = result[from] || []).push(to);
-      (result[to] = result[to] || []).push(from)
-      return result
-    }, {})
+  toCaveSystem(
+    linesOf(input).map(parseConnection))
 
 const parseConnection = line => line.split('-')
+
+const toCaveSystem = connections =>
+  connections.reduce((caveSystem, [from, to]) => {
+    (caveSystem[from] = caveSystem[from] || []).push(to);
+    (caveSystem[to] = caveSystem[to] || []).push(from)
+    return caveSystem
+  }, {})
 
 module.exports = { part1, part2 }
