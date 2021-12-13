@@ -1,13 +1,26 @@
 const { linesOf } = require('../utils')
 
 const part1 = input => {
+  const [paper, [firstInstruction]] = parseInput(input)
+
+  return paper
+    .fold(firstInstruction)
+    .numberOfDots
+}
+
+const part2 = input => {
+  const [paper, instructions] = parseInput(input)
+
+  return instructions
+    .reduce((p, instruction) => p.fold(instruction), paper)
+    .print()
+}
+
+const parseInput = input => {
   const [dotsInput, instructionsInput] = input.split('\n\n')
   const paper = Paper.parsePaper(dotsInput)
-  const [firstInstruction] = parseInstructions(instructionsInput)
-
-  const foldedPaper = paper.fold(firstInstruction)
-
-  return foldedPaper.numberOfDots
+  const instructions = parseInstructions(instructionsInput)
+  return [paper, instructions]
 }
 
 const parseInstructions = input => {
@@ -54,6 +67,26 @@ class Paper {
     }
   }
 
+  print () {
+    const [height, width] = this.dots
+      .reduce(([maxY, maxX], { y, x }) =>
+        [Math.max(maxY, y), Math.max(maxX, x)], [0, 0])
+      .map(number => number + 1)
+
+    let result = ''
+    for (let y = 0; y < height; y++) {
+      for (let x = 0; x < width; x++) {
+        if (this.dots.some(dot => dot.equals(new Dot([x, y])))) {
+          result += '#'
+        } else {
+          result += '.'
+        }
+      }
+      result += '\n'
+    }
+    return result
+  }
+
   static parsePaper (input) {
     return new Paper(
       linesOf(input).map(line => Dot.parseDot(line)))
@@ -95,4 +128,4 @@ class Dot {
   }
 }
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
