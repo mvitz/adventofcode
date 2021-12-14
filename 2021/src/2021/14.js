@@ -1,13 +1,17 @@
 const { linesOf } = require('../utils')
 
 const part1 = input => {
+  return solve(input, 10)
+}
+
+const solve = (input, rounds) => {
   let [polymer, rules] = parseInput(input)
 
-  for (let i = 0; i < 10; i++) {
-    polymer = apply(polymer, rules)
+  for (let i = 0; i < rounds; i++) {
+    polymer = polymer.apply(rules)
   }
 
-  const result = analyze(polymer)
+  const result = polymer.analyze()
 
   const elementOccurrences = Object.values(result)
     .sort((a, b) => a - b)
@@ -15,25 +19,37 @@ const part1 = input => {
   return elementOccurrences[elementOccurrences.length - 1] - elementOccurrences[0]
 }
 
-const analyze = polymer =>
-  polymer.reduce((result, element) => {
-    (result[element] = (result[element] || 0) + 1)
-    return result
-  }, {})
-
-const apply = (template, rules) => {
-  const newPolymer = []
-  for (let i = 0; i < template.length; i++) {
-    const pair = new Pair(template.slice(i, i + 2))
-
-    newPolymer.push(pair.first)
-
-    const { insertion } = rules.find(rule => rule.matches(pair)) || {}
-    if (insertion) {
-      newPolymer.push(insertion)
-    }
+class Polymer {
+  constructor (elements) {
+    this.elements = elements
   }
-  return newPolymer
+
+  apply (rules) {
+    const newElements = []
+    for (let i = 0; i < this.elements.length; i++) {
+      const pair = new Pair(this.elements.slice(i, i + 2))
+
+      newElements.push(pair.first)
+
+      const insertion = rules.apply(pair)
+      if (insertion) {
+        newElements.push(insertion)
+      }
+    }
+    return new Polymer(newElements)
+  }
+
+  analyze () {
+    return this.elements
+      .reduce((result, element) => {
+        (result[element] = (result[element] || 0) + 1)
+        return result
+      }, {})
+  }
+
+  toString () {
+    return this.elements.join('')
+  }
 }
 
 class Pair {
@@ -44,6 +60,21 @@ class Pair {
 
   equals ({ first, second }) {
     return this.first === first && this.second === second
+  }
+}
+
+class Rules {
+  constructor () {
+    this.rules = []
+  }
+
+  add (rule) {
+    this.rules.push(rule)
+    return this
+  }
+
+  apply (pair) {
+    return (this.rules.find(rule => rule.matches(pair)) || {}).insertion
   }
 }
 
@@ -63,11 +94,12 @@ const parseInput = input => {
   return [parseTemplate(templateInput), parseRules(rulesInput)]
 }
 
-const parseTemplate = input => input.split('')
+const parseTemplate = input => { return new Polymer(input.split('')) }
 
 const parseRules = input =>
   linesOf(input)
     .map(line => line.split(' -> '))
     .map(([pair, insertion]) => new Rule(new Pair(pair.split('')), insertion))
+    .reduce((rules, rule) => rules.add(rule), new Rules())
 
 module.exports = { part1 }
