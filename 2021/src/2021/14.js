@@ -4,6 +4,10 @@ const part1 = input => {
   return solve(input, 10)
 }
 
+const part2 = input => {
+  return solve(input, 40)
+}
+
 const solve = (input, rounds) => {
   let [polymer, rules] = parseInput(input)
 
@@ -102,4 +106,4 @@ const parseRules = input =>
     .map(([pair, insertion]) => new Rule(new Pair(pair.split('')), insertion))
     .reduce((rules, rule) => rules.add(rule), new Rules())
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
