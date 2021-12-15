@@ -1,8 +1,42 @@
 const { linesOf } = require('../../src/utils')
 
 const part1 = input => {
-  const rows = linesOf(input)
-    .map(line => line.split('').map(Number).map(node => new Node(node)))
+  const tile = parseTile(input)
+  const [start, end] = toMap(toNodes(tile))
+  aStar(start, end)
+  return end.risk
+}
+
+const part2 = input => {
+  const tile = parseTile(input)
+  const tiles = expandTile(tile, 5, 5)
+
+  const [start, end] = toMap(toNodes(tiles))
+  aStar(start, end)
+  return end.risk
+}
+
+const expandTile = (tile, vertical, horizontal) => {
+  // expand horizontal
+  const tileRow = []
+  for (const row of tile) {
+    const subRow = []
+    for (let i = 0; i < horizontal; i++) {
+      subRow.push(...row.map(risk => increaseRisk(risk, i)))
+    }
+    tileRow.push(subRow)
+  }
+
+  // expand vertically
+  const rows = []
+  for (let i = 0; i < vertical; i++) {
+    rows.push(...tileRow.map(row => row.map(risk => increaseRisk(risk, i))))
+  }
+
+  return rows
+}
+
+const toMap = rows => {
   rows.forEach((row, y) => row.forEach((node, x) => {
     // top neighbour
     if (y > 0) {
@@ -23,13 +57,10 @@ const part1 = input => {
   }))
 
   const start = rows[0][0]
-  start.value = 0
+  start.risk = 0
 
   const end = rows[rows.length - 1][rows[0].length - 1]
-
-  aStar(start, end)
-
-  return end.value
+  return [start, end]
 }
 
 const aStar = (start, end) => {
@@ -39,7 +70,7 @@ const aStar = (start, end) => {
   let current
   do {
     [current] = open
-      .sort((first, second) => first.value - second.value)
+      .sort((first, second) => first.risk - second.risk)
       .splice(0, 1)
 
     if (current === end) {
@@ -53,12 +84,12 @@ const aStar = (start, end) => {
         return
       }
 
-      const cost = current.value + successor.value
-      if (open.includes(successor) && cost >= successor.value) {
+      const cost = current.risk + successor.risk
+      if (open.includes(successor) && cost >= successor.risk) {
         return
       }
 
-      successor.value = cost
+      successor.risk = cost
       if (!open.includes(successor)) {
         open.push(successor)
       }
@@ -69,8 +100,8 @@ const aStar = (start, end) => {
 }
 
 class Node {
-  constructor (value) {
-    this.value = value
+  constructor (risk) {
+    this.risk = risk
     this.successors = []
   }
 
@@ -79,4 +110,16 @@ class Node {
   }
 }
 
-module.exports = { part1 }
+const toNodes = rows =>
+  rows.map(row => row.map(node => new Node(node)))
+
+const increaseRisk = (risk, increment) => {
+  const increasedRisk = risk + increment
+  return increasedRisk > 9 ? increasedRisk - 9 : increasedRisk
+}
+
+const parseTile = input =>
+  linesOf(input)
+    .map(line => line.split('').map(Number))
+
+module.exports = { part1, part2 }
