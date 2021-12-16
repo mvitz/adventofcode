@@ -4,6 +4,12 @@ const part1 = input => {
   return sumOfAllPackageVersions(packets)
 }
 
+const part2 = input => {
+  const bits = toBinary(input)
+  const [packet] = parse(bits)
+  return packet.eval()
+}
+
 const sumOfAllPackageVersions = packets => {
   let sum = 0
   for (const packet of packets) {
@@ -69,6 +75,10 @@ class LiteralValuePacket {
     this.value = value
   }
 
+  eval () {
+    return this.value
+  }
+
   toString () {
     return `{ ${this.version} | ${this.value} }`
   }
@@ -90,9 +100,25 @@ class LiteralValuePacket {
 }
 
 class OperatorPacket {
-  constructor (version, subPackets) {
+  constructor (version, type, subPackets) {
     this.version = version
+    this.type = type
     this.subPackets = subPackets
+  }
+
+  eval () {
+    const subValues = this.subPackets.map(packet => packet.eval())
+
+    switch (this.type) {
+      case 0: return subValues.reduce(sum)
+      case 1: return subValues.reduce(product, 1)
+      case 2: return subValues.sort((a, b) => a - b)[0]
+      case 3: return subValues.sort((a, b) => a - b).reverse()[0]
+      case 5: return subValues[0] > subValues[1] ? 1 : 0
+      case 6: return subValues[0] < subValues[1] ? 1 : 0
+      case 7: return subValues[0] === subValues[1] ? 1 : 0
+      default: throw new Error(`Unknown operator with type ${this.type}`)
+    }
   }
 
   toString () {
@@ -101,19 +127,24 @@ class OperatorPacket {
 
   static parse (bits) {
     const version = toNumber(bits.splice(0, 3))
-    bits.splice(0, 3)
+    const type = toNumber(bits.splice(0, 3))
+    const subPackets = OperatorPacket.parseSubPackets(bits)
+    return new OperatorPacket(version, type, subPackets)
+  }
 
+  static parseSubPackets (bits) {
     const [lengthTypeId] = bits.splice(0, 1)
     if (lengthTypeId === 0) {
       const totalBitLengthOfSubPackets = toNumber(bits.splice(0, 15))
-      const subPackets = parse(bits.splice(0, totalBitLengthOfSubPackets))
-      return new OperatorPacket(version, subPackets)
+      return parse(bits.splice(0, totalBitLengthOfSubPackets))
     } else {
       const numberOfSubPackets = toNumber(bits.splice(0, 11))
-      const subPackets = parsePackets(bits, numberOfSubPackets)
-      return new OperatorPacket(version, subPackets)
+      return parsePackets(bits, numberOfSubPackets)
     }
   }
 }
 
-module.exports = { part1 }
+const sum = (result, number) => result + number
+const product = (result, number) => result * number
+
+module.exports = { part1, part2 }
