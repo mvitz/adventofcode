@@ -37,7 +37,7 @@ describe('2021 day 16', () => {
     ${'F600BC2D8F'}                 | ${'0'}
     ${'9C005AC2F8F0'}               | ${'0'}
     ${'9C0141080250320F1802104A08'} | ${'1'}
-    `('should solve example $transmission => $sumOfAllPackageVersions', ({ transmission, producedResult }) => {
+    `('should solve example $transmission => $producedResult', ({ transmission, producedResult }) => {
       const input = transmission
 
       const result = part2(input)
