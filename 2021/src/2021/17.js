@@ -7,6 +7,15 @@ const part1 = input => {
   return findMaxY(initialVelocities)
 }
 
+const part2 = input => {
+  const [[tMinX, tMaxX], [tMaxY, tMinY]] = parseTarget(input)
+
+  const xs = findPossibleXs(tMinX, tMaxX)
+  const initialVelocities = findInitialVelocities(xs, tMinX, tMaxX, tMinY, tMaxY)
+
+  return initialVelocities.length
+}
+
 const findMaxY = initialVelocities => initialVelocities
   .map(([, y]) => y / 2 * (y + 1))
   .sort((a, b) => a - b)
@@ -16,7 +25,7 @@ const findInitialVelocities = (xs, tMinX, tMaxX, tMinY, tMaxY) => {
   const initialVelocities = []
   // TODO: find a way to calculate the upper bound
   for (const x of xs) {
-    for (let y = tMaxY; y < 10_000; y++) {
+    for (let y = tMaxY; y < 1_000; y++) {
       if (hits(x, y, tMinX, tMaxX, tMinY, tMaxY)) {
         initialVelocities.push([x, y])
       }
@@ -60,4 +69,4 @@ const parseRange = input => input
   .map(Number)
   .sort((a, b) => a - b)
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
