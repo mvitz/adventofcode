@@ -18,7 +18,7 @@ const findMaxY = initialVelocities => initialVelocities
   .map(([, y]) => y / 2 * (y + 1))
   .sort((a, b) => b - a)[0]
 
-const findInitialVelocities = (targetArea) =>
+const findInitialVelocities = targetArea =>
   findPossibleXs(targetArea)
     .flatMap(x =>
       findPossibleYs(targetArea)
