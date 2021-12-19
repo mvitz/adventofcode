@@ -52,8 +52,7 @@ const findPossibleXs = ({ left, right }) => {
 
 const findPossibleYs = ({ bottom }) => {
   const ys = []
-  // TODO: find a way to calculate the upper bound
-  for (let y = bottom; y < 1_000; y++) {
+  for (let y = bottom; y <= Math.abs(bottom); y++) {
     ys.push(y)
   }
   return ys
