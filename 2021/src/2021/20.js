@@ -1,8 +1,17 @@
 const part1 = input => {
+  return solve(input, 2)
+}
+
+const part2 = input => {
+  return solve(input, 50)
+}
+
+const solve = (input, numberOfEnhancements) => {
   let [algorithm, image] = parse(input)
-  image = algorithm.apply(image)
-  algorithm = algorithm.flip()
-  image = algorithm.apply(image)
+  for (let round = 0; round < numberOfEnhancements; round++) {
+    image = algorithm.apply(image)
+    algorithm = algorithm.flip()
+  }
   return image.numberOfLightPixels
 }
 
@@ -100,4 +109,4 @@ class Image {
   }
 }
 
-module.exports = { part1 }
+module.exports = { part1, part2 }
