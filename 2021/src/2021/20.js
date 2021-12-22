@@ -1,3 +1,5 @@
+const { linesOf } = require('../utils')
+
 const part1 = input => {
   return solve(input, 2)
 }
@@ -58,11 +60,7 @@ class Algorithm {
   }
 
   pixelAt (image, x, y) {
-    const pixel = image.pixelAt(x, y)
-    if (pixel) {
-      return pixel
-    }
-    return this.flipped ? '#' : '.'
+    return image.pixelAt(x, y, this.flipped ? '#' : '.')
   }
 
   static toIndex (pixelWithNeighbours) {
@@ -77,12 +75,12 @@ class Image {
     this.pixels = pixels
   }
 
-  pixelAt (x, y) {
+  pixelAt (x, y, fallback) {
     if (y < 0 || y >= this.height) {
-      return undefined
+      return fallback
     }
     if (x < 0 || x >= this.width) {
-      return undefined
+      return fallback
     }
     return this.pixels[y][x]
   }
@@ -104,8 +102,7 @@ class Image {
   }
 
   static parse (input) {
-    return new Image(
-      input.split('\n').map(line => line.split('')))
+    return new Image(linesOf(input).map(line => line.split('')))
   }
 }
 
