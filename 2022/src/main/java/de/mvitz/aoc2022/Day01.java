@@ -5,7 +5,10 @@ import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
 
-public class Day1 {
+final class Day01 {
+
+    private Day01() {
+    }
 
     public static long findMostCaloriesOfSingleElf(String input) {
         return elvesOf(input)
