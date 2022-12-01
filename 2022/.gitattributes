@@ -5,6 +5,7 @@
 # These files are text and should be normalized
 # (Convert crlf => lf)
 *.java text
+*.txt text
 *.xml text
 
 # These files are binary and should be left untouched
