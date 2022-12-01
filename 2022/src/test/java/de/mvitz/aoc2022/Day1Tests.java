@@ -2,6 +2,7 @@ package de.mvitz.aoc2022;
 
 import org.junit.jupiter.api.Test;
 
+import static de.mvitz.aoc2022.Day1.findCalorieSumOfTopThreeElves;
 import static de.mvitz.aoc2022.Day1.findMostCaloriesOfSingleElf;
 import static de.mvitz.aoc2022.Utils.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,5 +26,14 @@ class Day1Tests {
         var mostCaloriesOfSingleElf = findMostCaloriesOfSingleElf(input);
 
         assertThat(mostCaloriesOfSingleElf, is(69_626L));
+    }
+
+    @Test
+    void part2_example() {
+        var input = contentOf("day01_example.txt");
+
+        var calorieSumOfTopThreeElves = findCalorieSumOfTopThreeElves(input);
+
+        assertThat(calorieSumOfTopThreeElves, is(45_000L));
     }
 }
