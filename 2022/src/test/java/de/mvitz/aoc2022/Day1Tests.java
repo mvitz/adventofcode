@@ -36,4 +36,13 @@ class Day1Tests {
 
         assertThat(calorieSumOfTopThreeElves, is(45_000L));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day01.txt");
+
+        var calorieSumOfTopThreeElves = findCalorieSumOfTopThreeElves(input);
+
+        assertThat(calorieSumOfTopThreeElves, is(206_780L));
+    }
 }
