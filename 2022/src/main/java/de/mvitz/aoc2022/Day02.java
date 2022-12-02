@@ -8,7 +8,8 @@ final class Day02 {
     }
 
     public static int calculateScoreFor(
-            String input, ToIntFunction<String> strategy) {
+            String input,
+            ToIntFunction<String> strategy) {
         return input
                 .lines()
                 .mapToInt(strategy)
