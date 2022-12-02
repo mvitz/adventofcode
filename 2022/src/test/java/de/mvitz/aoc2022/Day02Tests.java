@@ -17,4 +17,13 @@ class Day02Tests {
 
         assertThat(score, is(15));
     }
+
+    @Test
+    void part1() {
+        var input = contentOf("day02.txt");
+
+        var score = calculateScoreFor(input);
+
+        assertThat(score, is(13_446));
+    }
 }
