@@ -5,9 +5,9 @@ final class Day02 {
     private Day02() {
     }
 
-    public static int calculateScoreFor(String input) {
+    public static int calculateFirstGuideScoreFor(String input) {
         return input.lines()
-            .mapToInt(Day02::scoreForRound)
+            .mapToInt(Day02::firstGuideScoreForRound)
             .sum();
     }
 
@@ -15,7 +15,7 @@ final class Day02 {
     // X for Rock, Y for Paper, and Z for Scissors
     // 1 for Rock, 2 for Paper, and 3 for Scissors
     // 0 if you lost, 3 if the round was a draw, and 6 if you won
-    private static int scoreForRound(String round) {
+    private static int firstGuideScoreForRound(String round) {
         return switch (round) {
             case "A X" -> 3 + 1;
             case "A Y" -> 6 + 2;
