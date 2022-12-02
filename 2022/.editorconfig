@@ -11,6 +11,9 @@ insert_final_newline = true
 max_line_length = 80
 trim_trailing_whitespace = true
 
+[*.java]
+continuation_indent_size = 8
+
 [*.xml]
 indent_size = 2
 
