@@ -1,0 +1,20 @@
+package de.mvitz.aoc2022;
+
+import org.junit.jupiter.api.Test;
+
+import static de.mvitz.aoc2022.Day02.calculateScoreFor;
+import static de.mvitz.aoc2022.Utils.contentOf;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
+
+class Day02Tests {
+
+    @Test
+    void part1_example() {
+        var input = contentOf("day02_example.txt");
+
+        var score = calculateScoreFor(input);
+
+        assertThat(score, is(15));
+    }
+}
