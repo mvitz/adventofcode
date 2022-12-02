@@ -35,4 +35,13 @@ class Day02Tests {
 
         assertThat(score, is(12));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day02.txt");
+
+        var score = calculateScoreFor(input, Day02::secondGuideScoreForRound);
+
+        assertThat(score, is(13_509));
+    }
 }
