@@ -36,4 +36,13 @@ class Day03Tests {
 
         assertThat(sumOfBadgeItemTypes, is(70));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day03.txt");
+
+        var sumOfBadgeItemTypes = sumOfBadgeItemTypesFor(input);
+
+        assertThat(sumOfBadgeItemTypes, is(2_602));
+    }
 }
