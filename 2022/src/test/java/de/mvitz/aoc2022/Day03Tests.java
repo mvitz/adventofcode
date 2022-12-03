@@ -2,6 +2,7 @@ package de.mvitz.aoc2022;
 
 import org.junit.jupiter.api.Test;
 
+import static de.mvitz.aoc2022.Day03.sumOfBadgeItemTypesFor;
 import static de.mvitz.aoc2022.Day03.sumOfWrongPackedItemTypePrioritiesFor;
 import static de.mvitz.aoc2022.Utils.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,5 +26,14 @@ class Day03Tests {
         var sumOfWrongPackedItemTypePriorities = sumOfWrongPackedItemTypePrioritiesFor(input);
 
         assertThat(sumOfWrongPackedItemTypePriorities, is(7_990));
+    }
+
+    @Test
+    void part2_example() {
+        var input = contentOf("day03_example.txt");
+
+        var sumOfBadgeItemTypes = sumOfBadgeItemTypesFor(input);
+
+        assertThat(sumOfBadgeItemTypes, is(70));
     }
 }
