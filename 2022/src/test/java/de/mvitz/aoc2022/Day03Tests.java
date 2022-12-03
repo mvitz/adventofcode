@@ -17,4 +17,13 @@ class Day03Tests {
 
         assertThat(sumOfWrongPackedItemTypePriorities, is(157));
     }
+
+    @Test
+    void part1() {
+        var input = contentOf("day03.txt");
+
+        var sumOfWrongPackedItemTypePriorities = sumOfWrongPackedItemTypePrioritiesFor(input);
+
+        assertThat(sumOfWrongPackedItemTypePriorities, is(7_990));
+    }
 }
