@@ -5,7 +5,9 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
+import static java.util.function.Predicate.isEqual;
 import static java.util.stream.Collectors.toSet;
 
 final class Day04 {
@@ -14,12 +16,17 @@ final class Day04 {
     }
 
     public static long numberOfFullyContainedAssignmentsFor(String input) {
-        return input
-                .lines()
-                .map(Day04::parseLine)
+        return parse(input)
                 .map(Day04::fullyContainedAssignmentOf)
                 .filter(Optional::isPresent)
                 .map(Optional::get)
+                .count();
+    }
+
+    public static long numberOfOverlappingAssignmentsFor(String input) {
+        return parse(input)
+                .map(pair -> pair.getKey().overlapps(pair.getValue()))
+                .filter(isEqual(true))
                 .count();
     }
 
@@ -37,6 +44,12 @@ final class Day04 {
         }
     }
 
+    private static Stream<Entry<Assignment, Assignment>> parse(String input) {
+        return input
+                .lines()
+                .map(Day04::parseLine);
+    }
+
     private static Entry<Assignment, Assignment> parseLine(String line) {
         final var pair = line.split(",");
 
@@ -47,6 +60,11 @@ final class Day04 {
     }
 
     private record Assignment(Set<Integer> sections) {
+
+        public boolean overlapps(Assignment other) {
+            return sections.stream()
+                    .anyMatch(other.sections::contains);
+        }
 
         public boolean isFullyContainedBy(Assignment other) {
             return other.sections.containsAll(sections);
