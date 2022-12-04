@@ -36,4 +36,13 @@ class Day04Tests {
 
         assertThat(numberOfOverlappingAssignments, is(4L));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day04.txt");
+
+        var numberOfOverlappingAssignments = numberOfOverlappingAssignmentsFor(input);
+
+        assertThat(numberOfOverlappingAssignments, is(931L));
+    }
 }
