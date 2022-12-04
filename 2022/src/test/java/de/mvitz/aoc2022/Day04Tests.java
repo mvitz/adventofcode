@@ -17,4 +17,13 @@ class Day04Tests {
 
         assertThat(numberOfFullyContainedAssignments, is(2L));
     }
+    
+    @Test
+    void part1() {
+        var input = contentOf("day04.txt");
+
+        var numberOfFullyContainedAssignments = numberOfFullyContainedAssignmentsFor(input);
+
+        assertThat(numberOfFullyContainedAssignments, is(550L));
+    }
 }
