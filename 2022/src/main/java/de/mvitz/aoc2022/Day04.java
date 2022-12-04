@@ -1,13 +1,9 @@
 package de.mvitz.aoc2022;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
-import static java.util.function.Predicate.isEqual;
 import static java.util.stream.Collectors.toSet;
 
 final class Day04 {
@@ -16,52 +12,44 @@ final class Day04 {
     }
 
     public static long numberOfFullyContainedAssignmentsFor(String input) {
-        return parse(input)
-                .map(Day04::fullyContainedAssignmentOf)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .count();
+        return numberOf(AssignmentPair::containsFullyContainedAssignment, input);
     }
 
     public static long numberOfOverlappingAssignmentsFor(String input) {
-        return parse(input)
-                .map(pair -> pair.getKey().overlapps(pair.getValue()))
-                .filter(isEqual(true))
+        return numberOf(AssignmentPair::containsOverlappingAssignments, input);
+    }
+
+    private static long numberOf(
+            Predicate<AssignmentPair> condition, String input) {
+        return input
+                .lines()
+                .map(AssignmentPair::from)
+                .filter(condition)
                 .count();
     }
 
-    private static Optional<Assignment> fullyContainedAssignmentOf(
-            Entry<Assignment, Assignment> pair) {
-        final var first = pair.getKey();
-        final var second = pair.getValue();
+    private record AssignmentPair(Assignment first, Assignment second) {
 
-        if (first.isFullyContainedBy(second)) {
-            return Optional.of(first);
-        } else if (second.isFullyContainedBy(first)) {
-            return Optional.of(second);
-        } else {
-            return Optional.empty();
+        public boolean containsFullyContainedAssignment() {
+            return first.isFullyContainedBy(second)
+                    || second.isFullyContainedBy(first);
         }
-    }
 
-    private static Stream<Entry<Assignment, Assignment>> parse(String input) {
-        return input
-                .lines()
-                .map(Day04::parseLine);
-    }
+        public boolean containsOverlappingAssignments() {
+            return first.overlaps(second);
+        }
 
-    private static Entry<Assignment, Assignment> parseLine(String line) {
-        final var pair = line.split(",");
-
-        final var first = Assignment.from(pair[0]);
-        final var second = Assignment.from(pair[1]);
-
-        return new SimpleEntry<>(first, second);
+        public static AssignmentPair from(String input) {
+            final var pair = input.split(",");
+            return new AssignmentPair(
+                    Assignment.from(pair[0]),
+                    Assignment.from(pair[1]));
+        }
     }
 
     private record Assignment(Set<Integer> sections) {
 
-        public boolean overlapps(Assignment other) {
+        public boolean overlaps(Assignment other) {
             return sections.stream()
                     .anyMatch(other.sections::contains);
         }
