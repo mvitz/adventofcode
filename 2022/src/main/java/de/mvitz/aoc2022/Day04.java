@@ -1,10 +1,12 @@
 package de.mvitz.aoc2022;
 
 import java.util.AbstractMap.SimpleEntry;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.IntStream;
+
+import static java.util.stream.Collectors.toSet;
 
 final class Day04 {
 
@@ -44,11 +46,10 @@ final class Day04 {
         return new SimpleEntry<>(first, second);
     }
 
-    private record Assignment(List<Integer> sections) {
+    private record Assignment(Set<Integer> sections) {
 
         public boolean isFullyContainedBy(Assignment other) {
-            return sections.stream()
-                    .allMatch(other.sections::contains);
+            return other.sections.containsAll(sections);
         }
 
         public static Assignment from(String input) {
@@ -60,7 +61,7 @@ final class Day04 {
             return new Assignment(IntStream
                     .range(start, end)
                     .boxed()
-                    .toList());
+                    .collect(toSet()));
         }
     }
 }
