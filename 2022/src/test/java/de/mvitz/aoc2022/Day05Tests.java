@@ -14,7 +14,7 @@ class Day05Tests {
     void part1_example() {
         var input = contentOf("day05_example.txt");
 
-        var crateOnTopMessage = findCrateOnTopMessageFor(input);
+        var crateOnTopMessage = findCrateOnTopMessageFor(9000, input);
 
         assertThat(crateOnTopMessage, is(equalTo("CMZ")));
     }
@@ -23,8 +23,17 @@ class Day05Tests {
     void part1() {
         var input = contentOf("day05.txt");
 
-        var crateOnTopMessage = findCrateOnTopMessageFor(input);
+        var crateOnTopMessage = findCrateOnTopMessageFor(9000, input);
 
         assertThat(crateOnTopMessage, is(equalTo("LJSVLTWQM")));
+    }
+
+    @Test
+    void part2_example() {
+        var input = contentOf("day05_example.txt");
+
+        var crateOnTopMessage = findCrateOnTopMessageFor(9001, input);
+
+        assertThat(crateOnTopMessage, is(equalTo("MCD")));
     }
 }
