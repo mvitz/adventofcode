@@ -36,4 +36,13 @@ class Day05Tests {
 
         assertThat(crateOnTopMessage, is(equalTo("MCD")));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day05.txt");
+
+        var crateOnTopMessage = findCrateOnTopMessageFor(9001, input);
+
+        assertThat(crateOnTopMessage, is(equalTo("BRQWDBBJM")));
+    }
 }
