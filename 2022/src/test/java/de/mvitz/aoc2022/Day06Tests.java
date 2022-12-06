@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
+import static de.mvitz.aoc2022.Day06.firstStartOfMessageMarkerPositionOf;
 import static de.mvitz.aoc2022.Day06.firstStartOfPacketMarkerPositionOf;
 import static de.mvitz.aoc2022.Utils.firstLineOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -31,5 +32,19 @@ class Day06Tests {
         var firstStartOfPacketMarkerPosition = firstStartOfPacketMarkerPositionOf(input);
 
         assertThat(firstStartOfPacketMarkerPosition, is(1_093));
+    }
+
+    @ParameterizedTest
+    @CsvSource(textBlock = """
+            mjqjpqmgbljsphdztnvjfqwrcgsmlb,19
+            bvwbjplbgvbhsrlpgdmjqwftvncz,23
+            nppdvjthqldpwncqszvftbrmjlhg,23
+            nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg,29
+            zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw,26
+                        """)
+    void part2_example(String input, int expectedFirstStartOfMessageMarkerPosition) {
+        var firstStartOfMessageMarkerPosition = firstStartOfMessageMarkerPositionOf(input);
+
+        assertThat(firstStartOfMessageMarkerPosition, is(expectedFirstStartOfMessageMarkerPosition));
     }
 }

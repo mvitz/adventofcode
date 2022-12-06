@@ -6,13 +6,21 @@ final class Day06 {
     }
 
     public static int firstStartOfPacketMarkerPositionOf(String input) {
-        for (var i = 4; i < input.length(); i++) {
-            final var lastFourCharacters = input.substring(i - 4, i);
-            final var numberOfDifferentCharacters = lastFourCharacters
+        return findMarkerPositionOf(input, 4);
+    }
+
+    public static int firstStartOfMessageMarkerPositionOf(String input) {
+        return findMarkerPositionOf(input, 14);
+    }
+
+    private static int findMarkerPositionOf(String input, int markerLength) {
+        for (var i = markerLength; i < input.length(); i++) {
+            final var characters = input.substring(i - markerLength, i);
+            final var numberOfDifferentCharacters = characters
                     .chars()
                     .distinct()
                     .count();
-            if (numberOfDifferentCharacters == 4) {
+            if (numberOfDifferentCharacters == markerLength) {
                 return i;
             }
         }
