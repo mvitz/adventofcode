@@ -4,8 +4,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static de.mvitz.aoc2022.Day06.firstStartOfMessageMarkerPositionOf;
-import static de.mvitz.aoc2022.Day06.firstStartOfPacketMarkerPositionOf;
+import static de.mvitz.aoc2022.Day06.findFirstMessageStartPositionOf;
+import static de.mvitz.aoc2022.Day06.findFirstPacketStartPositionOf;
 import static de.mvitz.aoc2022.Utils.firstLineOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -19,19 +19,19 @@ class Day06Tests {
             nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg,10
             zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw,11
                         """)
-    void part1_example(String input, int expectedFirstStartOfPacketMarkerPosition) {
-        var firstStartOfPacketMarkerPosition = firstStartOfPacketMarkerPositionOf(input);
+    void part1_example(String input, int expectedFirstPacketStartPosition) {
+        var firstPacketStartPosition = findFirstPacketStartPositionOf(input);
 
-        assertThat(firstStartOfPacketMarkerPosition, is(expectedFirstStartOfPacketMarkerPosition));
+        assertThat(firstPacketStartPosition, is(expectedFirstPacketStartPosition));
     }
 
     @Test
     void part1() {
         var input = firstLineOf("day06.txt");
 
-        var firstStartOfPacketMarkerPosition = firstStartOfPacketMarkerPositionOf(input);
+        var firstPacketStartPosition = findFirstPacketStartPositionOf(input);
 
-        assertThat(firstStartOfPacketMarkerPosition, is(1_093));
+        assertThat(firstPacketStartPosition, is(1_093));
     }
 
     @ParameterizedTest
@@ -42,18 +42,18 @@ class Day06Tests {
             nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg,29
             zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw,26
                         """)
-    void part2_example(String input, int expectedFirstStartOfMessageMarkerPosition) {
-        var firstStartOfMessageMarkerPosition = firstStartOfMessageMarkerPositionOf(input);
+    void part2_example(String input, int expectedFirstMessageStartPosition) {
+        var firstMessageStartPosition = findFirstMessageStartPositionOf(input);
 
-        assertThat(firstStartOfMessageMarkerPosition, is(expectedFirstStartOfMessageMarkerPosition));
+        assertThat(firstMessageStartPosition, is(expectedFirstMessageStartPosition));
     }
 
     @Test
     void part2() {
         var input = firstLineOf("day06.txt");
 
-        var firstStartOfMessageMarkerPosition = firstStartOfMessageMarkerPositionOf(input);
+        var firstMessageStartPosition = findFirstMessageStartPositionOf(input);
 
-        assertThat(firstStartOfMessageMarkerPosition, is(3_534));
+        assertThat(firstMessageStartPosition, is(3_534));
     }
 }
