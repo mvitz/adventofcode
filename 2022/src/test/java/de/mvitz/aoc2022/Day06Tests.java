@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static de.mvitz.aoc2022.Day06.firstMarkPositionOf;
+import static de.mvitz.aoc2022.Day06.firstStartOfPacketMarkerPositionOf;
 import static de.mvitz.aoc2022.Utils.firstLineOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -18,18 +18,18 @@ class Day06Tests {
             nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg,10
             zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw,11
                         """)
-    void part1_example(String input, int expectedFirstMarkerPosition) {
-        var firstMarkerPosition = firstMarkPositionOf(input);
+    void part1_example(String input, int expectedFirstStartOfPacketMarkerPosition) {
+        var firstStartOfPacketMarkerPosition = firstStartOfPacketMarkerPositionOf(input);
 
-        assertThat(firstMarkerPosition, is(expectedFirstMarkerPosition));
+        assertThat(firstStartOfPacketMarkerPosition, is(expectedFirstStartOfPacketMarkerPosition));
     }
 
     @Test
     void part1() {
         var input = firstLineOf("day06.txt");
 
-        var firstMarkerPosition = firstMarkPositionOf(input);
+        var firstStartOfPacketMarkerPosition = firstStartOfPacketMarkerPositionOf(input);
 
-        assertThat(firstMarkerPosition, is(1_093));
+        assertThat(firstStartOfPacketMarkerPosition, is(1_093));
     }
 }
