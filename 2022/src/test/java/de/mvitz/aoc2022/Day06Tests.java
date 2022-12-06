@@ -47,4 +47,13 @@ class Day06Tests {
 
         assertThat(firstStartOfMessageMarkerPosition, is(expectedFirstStartOfMessageMarkerPosition));
     }
+
+    @Test
+    void part2() {
+        var input = firstLineOf("day06.txt");
+
+        var firstStartOfMessageMarkerPosition = firstStartOfMessageMarkerPositionOf(input);
+
+        assertThat(firstStartOfMessageMarkerPosition, is(3_534));
+    }
 }
