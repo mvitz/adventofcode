@@ -21,4 +21,11 @@ final class Utils {
             throw new RuntimeException("Unable to read content of: " + name, e);
         }
     }
+
+    public static String firstLineOf(String name) {
+        return contentOf(name)
+                .lines()
+                .findFirst()
+                .orElseThrow();
+    }
 }
