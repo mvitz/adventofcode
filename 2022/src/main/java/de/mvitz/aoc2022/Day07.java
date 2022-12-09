@@ -28,7 +28,12 @@ final class Day07 {
     public static int findTotalSizeOfSmallestDirectoryToDeleteFor(String input) {
         final var terminal = parse(input);
 
-        final var minimumSpaceToFreeUp = terminal.pwd.size() - 30_000_000;
+        final var maximumDiskSpaceAvailable = 70_000_000;
+        final var requiredDiskSpace = 30_000_000;
+        final var usedDiskSpace = terminal.pwd.size();
+        final var freeDiskSpace = maximumDiskSpaceAvailable - usedDiskSpace;
+        final var minimumSpaceToFreeUp = requiredDiskSpace - freeDiskSpace;
+
         final var smallestDirToDelete = new AtomicReference<Directory>();
         terminal.pwd.visitDirectories(dir -> {
             final var size = dir.size();
@@ -77,7 +82,6 @@ final class Day07 {
             }
         });
     }
-
 
     private static final class Terminal {
 

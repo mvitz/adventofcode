@@ -36,4 +36,13 @@ class Day07Tests {
 
         assertThat(totalSizeOfSmallestDirectoryToDelete, is(24_933_642));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day07.txt");
+
+        var totalSizeOfSmallestDirectoryToDelete = findTotalSizeOfSmallestDirectoryToDeleteFor(input);
+
+        assertThat(totalSizeOfSmallestDirectoryToDelete, is(7_991_939));
+    }
 }
