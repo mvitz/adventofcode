@@ -17,4 +17,13 @@ class Day07Tests {
 
         assertThat(sumOfTotalSizeOfDirectoriesBelow100000, is(95_437));
     }
+
+    @Test
+    void part1() {
+        var input = contentOf("day07.txt");
+
+        var sumOfTotalSizeOfDirectoriesBelow100000 = findSumOfTotalSizeOfDirectoriesBelow100000(input);
+
+        assertThat(sumOfTotalSizeOfDirectoriesBelow100000, is(1_513_699));
+    }
 }
