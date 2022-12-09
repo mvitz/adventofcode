@@ -3,6 +3,7 @@ package de.mvitz.aoc2022;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
 
@@ -12,12 +13,7 @@ final class Day07 {
     }
 
     public static int findSumOfTotalSizeOfDirectoriesBelow100000(String input) {
-        final var terminal = new Terminal();
-        parse(input,
-                terminal::cd,
-                terminal::mkdir,
-                terminal::mkfile);
-        terminal.cd("/");
+        final var terminal = parse(input);
 
         var sum = new AtomicInteger(0);
         terminal.pwd.visitDirectories(dir -> {
@@ -26,8 +22,41 @@ final class Day07 {
                 sum.getAndAdd(size);
             }
         });
-
         return sum.get();
+    }
+
+    public static int findTotalSizeOfSmallestDirectoryToDeleteFor(String input) {
+        final var terminal = parse(input);
+
+        final var minimumSpaceToFreeUp = terminal.pwd.size() - 30_000_000;
+        final var smallestDirToDelete = new AtomicReference<Directory>();
+        terminal.pwd.visitDirectories(dir -> {
+            final var size = dir.size();
+            if (size <= minimumSpaceToFreeUp) {
+                return;
+            }
+            smallestDirToDelete.getAndUpdate(currentSmallestDirToDelete -> {
+                if (currentSmallestDirToDelete != null && currentSmallestDirToDelete.size() < size) {
+                    return currentSmallestDirToDelete;
+                }
+                return dir;
+            });
+        });
+
+        return smallestDirToDelete.get().size();
+    }
+
+    public static Terminal parse(String input) {
+        final var terminal = new Terminal();
+
+        parse(input,
+                terminal::cd,
+                terminal::mkdir,
+                terminal::mkfile);
+
+        terminal.cd("/");
+
+        return terminal;
     }
 
     public static void parse(String input,
