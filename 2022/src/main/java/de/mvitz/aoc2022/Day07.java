@@ -2,10 +2,9 @@ package de.mvitz.aoc2022;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.ObjIntConsumer;
+import java.util.stream.Stream;
 
 final class Day07 {
 
@@ -15,14 +14,10 @@ final class Day07 {
     public static int findSumOfTotalSizeOfDirectoriesBelow100000(String input) {
         final var terminal = parse(input);
 
-        var sum = new AtomicInteger(0);
-        terminal.pwd.visitDirectories(dir -> {
-            final var size = dir.size();
-            if (size < 100_000) {
-                sum.getAndAdd(size);
-            }
-        });
-        return sum.get();
+        return terminal.pwd.findDirectories()
+                .mapToInt(Directory::size)
+                .filter(size -> size < 100_000)
+                .sum();
     }
 
     public static int findTotalSizeOfSmallestDirectoryToDeleteFor(String input) {
@@ -34,21 +29,12 @@ final class Day07 {
         final var freeDiskSpace = maximumDiskSpaceAvailable - usedDiskSpace;
         final var minimumSpaceToFreeUp = requiredDiskSpace - freeDiskSpace;
 
-        final var smallestDirToDelete = new AtomicReference<Directory>();
-        terminal.pwd.visitDirectories(dir -> {
-            final var size = dir.size();
-            if (size <= minimumSpaceToFreeUp) {
-                return;
-            }
-            smallestDirToDelete.getAndUpdate(currentSmallestDirToDelete -> {
-                if (currentSmallestDirToDelete != null && currentSmallestDirToDelete.size() < size) {
-                    return currentSmallestDirToDelete;
-                }
-                return dir;
-            });
-        });
-
-        return smallestDirToDelete.get().size();
+        return terminal.pwd.findDirectories()
+                .mapToInt(Directory::size)
+                .filter(size -> size >= minimumSpaceToFreeUp)
+                .sorted()
+                .findFirst()
+                .orElseThrow();
     }
 
     public static Terminal parse(String input) {
@@ -121,9 +107,11 @@ final class Day07 {
                              List<File> files,
                              List<Directory> subDirectories) {
 
-        public void visitDirectories(Consumer<Directory> onDir) {
-            subDirectories.forEach(subDir -> subDir.visitDirectories(onDir));
-            onDir.accept(this);
+        public Stream<Directory> findDirectories() {
+            return Stream.concat(
+                    subDirectories.stream().flatMap(Directory::findDirectories),
+                    Stream.of(this)
+            );
         }
 
         public int size() {
