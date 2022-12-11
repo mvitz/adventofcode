@@ -14,7 +14,34 @@ final class Day08 {
                 .count();
     }
 
+    public static long findHighestScenicScoreFor(String input) {
+        final var grid = Grid.from(input);
+        return grid.trees()
+                .mapToLong(grid::scenicScoreOf)
+                .max()
+                .orElse(-1);
+    }
+
     private record Tree(int row, int col, int height) {
+
+        public boolean isBetween(Tree first, Tree second) {
+            if (first.row == second.row) {
+                return col > Math.min(first.col, second.col)
+                        && col < Math.max(first.col, second.col);
+            }
+            if (first.col == second.col) {
+                return row > Math.min(first.row, second.row)
+                        && row < Math.max(first.row, second.row);
+            }
+            return false;
+        }
+
+        public boolean isHigherThanAll(Stream<Tree> otherTrees) {
+            return otherTrees
+                    .mapToInt(Tree::height)
+                    .max()
+                    .orElse(Integer.MAX_VALUE) > height;
+        }
 
         public boolean isLowerThanAll(Stream<Tree> otherTrees) {
             return otherTrees
@@ -47,6 +74,21 @@ final class Day08 {
                     || tree.isLowerThanAll(rightTreesOf(tree))
                     || tree.isLowerThanAll(topTreesOf(tree))
                     || tree.isLowerThanAll(bottomTreesOf(tree));
+        }
+
+        public long scenicScoreOf(Tree tree) {
+            return leftTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherThanAll(leftTreesOf(tree).filter(left -> left.isBetween(candidate, tree))))
+                    .count()
+                    * rightTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherThanAll(rightTreesOf(tree).filter(right -> right.isBetween(candidate, tree))))
+                    .count()
+                    * topTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherThanAll(topTreesOf(tree).filter(top -> top.isBetween(candidate, tree))))
+                    .count()
+                    * bottomTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherThanAll(bottomTreesOf(tree).filter(bottom -> bottom.isBetween(candidate, tree))))
+                    .count();
         }
 
         public Tree treeAt(int row, int col) {
