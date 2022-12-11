@@ -17,4 +17,13 @@ class Day10Tests {
 
         assertThat(sumOfRequiredSignalStrengths, is(13_140));
     }
+
+    @Test
+    void part1() {
+        var input = contentOf("day10.txt");
+
+        var sumOfRequiredSignalStrengths = findSumOfRequiredSignalStrengthsFrom(input);
+
+        assertThat(sumOfRequiredSignalStrengths, is(14_760));
+    }
 }
