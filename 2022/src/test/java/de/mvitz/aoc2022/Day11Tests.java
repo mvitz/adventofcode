@@ -17,4 +17,13 @@ class Day11Tests {
 
         assertThat(levelOfMonkeyBusinessAfter20Rounds, is(10_605));
     }
+
+    @Test
+    void part1() {
+        var input = contentOf("day11.txt");
+
+        var levelOfMonkeyBusinessAfter20Rounds = findLevelOfMonkeyBusinessAfter20RoundsFor(input);
+
+        assertThat(levelOfMonkeyBusinessAfter20Rounds, is(57_838));
+    }
 }
