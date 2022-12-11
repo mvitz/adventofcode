@@ -2,6 +2,8 @@ package de.mvitz.aoc2022;
 
 import java.util.stream.Stream;
 
+import static java.util.Comparator.comparing;
+
 final class Day08 {
 
     private Day08() {
@@ -24,30 +26,16 @@ final class Day08 {
 
     private record Tree(int row, int col, int height) {
 
-        public boolean isBetween(Tree first, Tree second) {
-            if (first.row == second.row) {
-                return col > Math.min(first.col, second.col)
-                        && col < Math.max(first.col, second.col);
-            }
-            if (first.col == second.col) {
-                return row > Math.min(first.row, second.row)
-                        && row < Math.max(first.row, second.row);
-            }
-            return false;
+        public boolean isHigherOrEqualThan(Tree other) {
+            return height >= other.height;
+        }
+
+        public boolean isHigherThan(Tree other) {
+            return height > other.height;
         }
 
         public boolean isHigherThanAll(Stream<Tree> otherTrees) {
-            return otherTrees
-                    .mapToInt(Tree::height)
-                    .max()
-                    .orElse(Integer.MAX_VALUE) > height;
-        }
-
-        public boolean isLowerThanAll(Stream<Tree> otherTrees) {
-            return otherTrees
-                    .mapToInt(Tree::height)
-                    .max()
-                    .orElse(-1) < height;
+            return otherTrees.allMatch(this::isHigherThan);
         }
     }
 
@@ -70,49 +58,70 @@ final class Day08 {
         }
 
         public boolean isTreeVisible(Tree tree) {
-            return tree.isLowerThanAll(leftTreesOf(tree))
-                    || tree.isLowerThanAll(rightTreesOf(tree))
-                    || tree.isLowerThanAll(topTreesOf(tree))
-                    || tree.isLowerThanAll(bottomTreesOf(tree));
+            return tree.isHigherThanAll(leftTreesOf(tree))
+                    || tree.isHigherThanAll(rightTreesOf(tree))
+                    || tree.isHigherThanAll(topTreesOf(tree))
+                    || tree.isHigherThanAll(bottomTreesOf(tree));
         }
 
         public long scenicScoreOf(Tree tree) {
-            return leftTreesOf(tree)
-                    .filter(candidate -> candidate.isHigherThanAll(leftTreesOf(tree).filter(left -> left.isBetween(candidate, tree))))
-                    .count()
-                    * rightTreesOf(tree)
-                    .filter(candidate -> candidate.isHigherThanAll(rightTreesOf(tree).filter(right -> right.isBetween(candidate, tree))))
-                    .count()
-                    * topTreesOf(tree)
-                    .filter(candidate -> candidate.isHigherThanAll(topTreesOf(tree).filter(top -> top.isBetween(candidate, tree))))
-                    .count()
-                    * bottomTreesOf(tree)
-                    .filter(candidate -> candidate.isHigherThanAll(bottomTreesOf(tree).filter(bottom -> bottom.isBetween(candidate, tree))))
-                    .count();
+            final long left = leftTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherOrEqualThan(tree))
+                    .max(comparing(Tree::col))
+                    .map(other -> tree.col - other.col)
+                    .orElse(tree.col);
+            final var right = rightTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherOrEqualThan(tree))
+                    .min(comparing(Tree::col))
+                    .map(other -> other.col - tree.col)
+                    .orElse(width() - 1 - tree.col);
+            final var top = topTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherOrEqualThan(tree))
+                    .max(comparing(Tree::row))
+                    .map(other -> tree.row - other.row)
+                    .orElse(tree.row);
+            final var bottom = bottomTreesOf(tree)
+                    .filter(candidate -> candidate.isHigherOrEqualThan(tree))
+                    .min(comparing(Tree::row))
+                    .map(other -> other.row - tree.row)
+                    .orElse(height() - 1 - tree.row);
+            return left * right * top * bottom;
         }
 
-        public Tree treeAt(int row, int col) {
+        private Tree treeAt(int row, int col) {
             return trees[row][col];
         }
 
         private Stream<Tree> leftTreesOf(Tree tree) {
-            return trees()
-                    .filter(candidate -> candidate.row == tree.row && candidate.col < tree.col);
+            final var builder = Stream.<Tree>builder();
+            for (var col = 0; col < tree.col; col++) {
+                builder.add(treeAt(tree.row, col));
+            }
+            return builder.build();
         }
 
         private Stream<Tree> rightTreesOf(Tree tree) {
-            return trees()
-                    .filter(candidate -> candidate.row == tree.row && candidate.col > tree.col);
+            final var builder = Stream.<Tree>builder();
+            for (var col = tree.col + 1; col < width(); col++) {
+                builder.add(treeAt(tree.row, col));
+            }
+            return builder.build();
         }
 
         private Stream<Tree> topTreesOf(Tree tree) {
-            return trees()
-                    .filter(candidate -> candidate.col == tree.col && candidate.row < tree.row);
+            final var builder = Stream.<Tree>builder();
+            for (var row = 0; row < tree.row; row++) {
+                builder.add(treeAt(row, tree.col));
+            }
+            return builder.build();
         }
 
         private Stream<Tree> bottomTreesOf(Tree tree) {
-            return trees()
-                    .filter(candidate -> candidate.col == tree.col && candidate.row > tree.row);
+            final var builder = Stream.<Tree>builder();
+            for (var row = tree.row + 1; row < height(); row++) {
+                builder.add(treeAt(row, tree.col));
+            }
+            return builder.build();
         }
 
         public int height() {

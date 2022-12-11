@@ -36,4 +36,13 @@ class Day08Tests {
 
         assertThat(highestScenicScore, is(8L));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day08.txt");
+
+        var highestScenicScore = findHighestScenicScoreFor(input);
+
+        assertThat(highestScenicScore, is(291_840L));
+    }
 }
