@@ -89,7 +89,7 @@ final class Day10 {
         private int runCycles = 0;
 
         private int registerX = 1;
-        private StringBuilder crt = new StringBuilder("");
+        private final StringBuilder crt = new StringBuilder();
 
         private final Deque<Instruction> instructions = new ArrayDeque<>();
 
@@ -99,22 +99,38 @@ final class Day10 {
 
         public void run(int cycles) {
             for (int i = 0; i < cycles; i++) {
-                if (Math.abs((runCycles % 40) - registerX) <= 1) {
-                    crt.append("#");
-                } else {
-                    crt.append(".");
-                }
-                if (runCycles % 40 == 39) {
-                    crt.append("\n");
-                }
+                run();
+            }
+        }
 
-                runCycles++;
+        private void run() {
+            drawPixelOnCrt();
+            executeInstruction();
+            runCycles++;
+        }
 
-                final var instruction = instructions.peekFirst();
-                final var finished = instruction.onCycle(this);
-                if (finished) {
-                    instructions.removeFirst();
-                }
+        private void drawPixelOnCrt() {
+            final var pixelPosition = runCycles % 40;
+
+            if (Math.abs(pixelPosition - registerX) <= 1) {
+                crt.append("#");
+            } else {
+                crt.append(".");
+            }
+
+            if (pixelPosition == 39) {
+                crt.append("\n");
+            }
+        }
+
+        private void executeInstruction() {
+            final var instruction = instructions.peekFirst();
+            if (instruction == null) {
+                return;
+            }
+            final var finished = instruction.onCycle(this);
+            if (finished) {
+                instructions.removeFirst();
             }
         }
 
