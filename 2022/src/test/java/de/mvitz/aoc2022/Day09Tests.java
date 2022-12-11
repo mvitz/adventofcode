@@ -44,4 +44,13 @@ class Day09Tests {
 
         assertThat(numberOfPositionsVisitedByTailAtLeastOnce, is(36L));
     }
+
+    @Test
+    void part2() {
+        var input = contentOf("day09.txt");
+
+        var numberOfPositionsVisitedByTailAtLeastOnce = findNumberOfPositionsVisitedByTailAtLeastOnceFor(input, 10);
+
+        assertThat(numberOfPositionsVisitedByTailAtLeastOnce, is(2_566L));
+    }
 }
