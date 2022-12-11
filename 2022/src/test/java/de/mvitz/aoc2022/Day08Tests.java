@@ -17,4 +17,13 @@ class Day08Tests {
 
         assertThat(numberOfVisibleTrees, is(21L));
     }
+
+    @Test
+    void part1() {
+        var input = contentOf("day08.txt");
+
+        var numberOfVisibleTrees = findNumberOfVisibleTreesFor(input);
+
+        assertThat(numberOfVisibleTrees, is(1_829L));
+    }
 }
