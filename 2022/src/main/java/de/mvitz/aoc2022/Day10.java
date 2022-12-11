@@ -23,6 +23,15 @@ final class Day10 {
         return sumOfSignalStrengths;
     }
 
+    public static String crtAfter240CyclesFor(String input) {
+        final var cpu = new Cpu();
+        parse(input).forEach(cpu::queue);
+
+        cpu.run(240);
+
+        return cpu.crt();
+    }
+
     private static Stream<Instruction> parse(String input) {
         return input
                 .lines()
@@ -77,8 +86,10 @@ final class Day10 {
 
     private static final class Cpu {
 
-        private int registerX = 1;
         private int runCycles = 0;
+
+        private int registerX = 1;
+        private StringBuilder crt = new StringBuilder("");
 
         private final Deque<Instruction> instructions = new ArrayDeque<>();
 
@@ -88,13 +99,27 @@ final class Day10 {
 
         public void run(int cycles) {
             for (int i = 0; i < cycles; i++) {
+                if (Math.abs((runCycles % 40) - registerX) <= 1) {
+                    crt.append("#");
+                } else {
+                    crt.append(".");
+                }
+                if (runCycles % 40 == 39) {
+                    crt.append("\n");
+                }
+
                 runCycles++;
+
                 final var instruction = instructions.peekFirst();
                 final var finished = instruction.onCycle(this);
                 if (finished) {
                     instructions.removeFirst();
                 }
             }
+        }
+
+        public String crt() {
+            return crt.toString();
         }
     }
 }
