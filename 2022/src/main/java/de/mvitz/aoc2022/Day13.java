@@ -2,6 +2,9 @@ package de.mvitz.aoc2022;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.util.function.Predicate.not;
 
 final class Day13 {
 
@@ -25,6 +28,24 @@ final class Day13 {
         }
 
         return sum;
+    }
+
+    public static int findDecoderKeyOfDistressSignalFor(String input) {
+        final var firstDivider = Packet.of(PacketData.List.of(PacketData.Value.of(2)));
+        final var secondDivider = Packet.of(PacketData.List.of(PacketData.Value.of(6)));
+
+        final var orderedPackets = Stream.concat(
+                        Stream.of(firstDivider, secondDivider),
+                        input.lines()
+                                .filter(not(String::isBlank))
+                                .map(Packet::parse))
+                .sorted()
+                .toList();
+
+        final var firstDividerLocation = orderedPackets.indexOf(firstDivider) + 1;
+        final var secondDividerLocation = orderedPackets.indexOf(secondDivider) + 1;
+
+        return firstDividerLocation * secondDividerLocation;
     }
 
     record Packet(PacketData.List data) implements Comparable<Packet> {

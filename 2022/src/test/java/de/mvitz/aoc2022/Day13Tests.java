@@ -9,6 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
+import static de.mvitz.aoc2022.Day13.findDecoderKeyOfDistressSignalFor;
 import static de.mvitz.aoc2022.Day13.sumOfIndicesOfRightOrderedPacketPairsFrom;
 import static de.mvitz.aoc2022.Utils.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -33,6 +34,15 @@ class Day13Tests {
         var sumOfIndicesOfRightOrderedPacketPairs = sumOfIndicesOfRightOrderedPacketPairsFrom(input);
 
         assertThat(sumOfIndicesOfRightOrderedPacketPairs, is(5_808L));
+    }
+
+    @Test
+    void part2_example() {
+        var input = contentOf("day13_example.txt");
+
+        var decoderKeyOfDistressSignal = findDecoderKeyOfDistressSignalFor(input);
+
+        assertThat(decoderKeyOfDistressSignal, is(140));
     }
 
     @ParameterizedTest
