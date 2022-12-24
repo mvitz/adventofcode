@@ -26,6 +26,15 @@ class Day13Tests {
         assertThat(sumOfIndicesOfRightOrderedPacketPairs, is(13L));
     }
 
+    @Test
+    void part1() {
+        var input = contentOf("day13.txt");
+
+        var sumOfIndicesOfRightOrderedPacketPairs = sumOfIndicesOfRightOrderedPacketPairsFrom(input);
+
+        assertThat(sumOfIndicesOfRightOrderedPacketPairs, is(5_808L));
+    }
+
     @ParameterizedTest
     @MethodSource("parsingExamples")
     void parse(String input, Packet expectedPacket) {
