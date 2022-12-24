@@ -63,11 +63,11 @@ class Day13Tests {
     }
 
     @ParameterizedTest
-    @MethodSource("compareToExamples")
-    void compareTo(Packet left, Packet right, boolean leftShouldBeBeforeRight) {
-        var comparison = left.compareTo(right);
+    @MethodSource("isBeforeExamples")
+    void isBefore(Packet left, Packet right, boolean expectedIsBefore) {
+        var isBefore = left.isBefore(right);
 
-        assertThat(comparison < 0, is(leftShouldBeBeforeRight));
+        assertThat(isBefore, is(expectedIsBefore));
     }
 
     static Stream<Arguments> parsingExamples() {
@@ -127,7 +127,7 @@ class Day13Tests {
                                 PacketData.Value.of(9))));
     }
 
-    static Stream<Arguments> compareToExamples() {
+    static Stream<Arguments> isBeforeExamples() {
         return Stream.of(
                 Arguments.of(Packet.parse("[1,1,3,1,1]"), Packet.parse("[1,1,5,1,1]"), true),
                 Arguments.of(Packet.parse("[[1],[2,3,4]]"), Packet.parse("[[1],4]"), true),

@@ -22,7 +22,7 @@ final class Day13 {
             final var left = Packet.parse(pair[0]);
             final var right = Packet.parse(pair[1]);
 
-            if (left.compareTo(right) < 0) {
+            if (left.isBefore(right)) {
                 sum += (i + 1);
             }
         }
@@ -50,6 +50,10 @@ final class Day13 {
 
     record Packet(PacketData.List data) implements Comparable<Packet> {
 
+        public boolean isBefore(Packet other) {
+            return this.compareTo(other) < 0;
+        }
+
         @Override
         public int compareTo(Packet other) {
             return this.data.compareTo(other.data);
@@ -68,16 +72,16 @@ final class Day13 {
 
         record Value(int value) implements PacketData {
 
+            public PacketData asList() {
+                return List.of(this);
+            }
+
             @Override
             public int compareTo(PacketData other) {
                 return switch (other) {
                     case Value v -> this.value - v.value;
                     case List l -> asList().compareTo(l);
                 };
-            }
-
-            public PacketData asList() {
-                return List.of(this);
             }
 
             @Override
@@ -91,6 +95,10 @@ final class Day13 {
         }
 
         record List(java.util.List<PacketData> values) implements PacketData {
+
+            public void append(PacketData data) {
+                values.add(data);
+            }
 
             @Override
             public int compareTo(PacketData other) {
@@ -115,14 +123,12 @@ final class Day13 {
                         return comparison;
                     }
                 }
-                if (l.values.size() > this.values().size()) {
+
+                if (l.values.size() > values.size()) {
                     return -1;
                 }
-                return 0;
-            }
 
-            public void append(PacketData data) {
-                values.add(data);
+                return 0;
             }
 
             @Override
