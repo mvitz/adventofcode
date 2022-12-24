@@ -45,6 +45,15 @@ class Day13Tests {
         assertThat(decoderKeyOfDistressSignal, is(140));
     }
 
+    @Test
+    void part2() {
+        var input = contentOf("day13.txt");
+
+        var decoderKeyOfDistressSignal = findDecoderKeyOfDistressSignalFor(input);
+
+        assertThat(decoderKeyOfDistressSignal, is(22_713));
+    }
+
     @ParameterizedTest
     @MethodSource("parsingExamples")
     void parse(String input, Packet expectedPacket) {
