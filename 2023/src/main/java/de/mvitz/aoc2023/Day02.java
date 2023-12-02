@@ -32,7 +32,7 @@ final class Day02 {
 	record Game(long id, Cubes cubes, Rounds rounds) {
 
 		boolean isPossible() {
-			return rounds.eachContainsAtLeast(cubes);
+			return rounds.eachContainsAtMost(cubes);
 		}
 
 		Cubes minimalCubes() {
@@ -84,7 +84,7 @@ final class Day02 {
 
 		record Rounds(List<Round> value) {
 
-			boolean eachContainsAtLeast(Cubes cubes) {
+			boolean eachContainsAtMost(Cubes cubes) {
 				return value.stream()
 						.allMatch(round -> round.containsLessThan(cubes));
 			}
