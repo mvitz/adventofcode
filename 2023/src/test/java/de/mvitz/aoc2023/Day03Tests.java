@@ -2,6 +2,7 @@ package de.mvitz.aoc2023;
 
 import org.junit.jupiter.api.Test;
 
+import static de.mvitz.aoc2023.Day03.sumOfGearRatios;
 import static de.mvitz.aoc2023.Day03.sumOfPartNumbers;
 import static de.mvitz.aoc2023.Utils.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,5 +26,23 @@ class Day03Tests {
 		var solution = sumOfPartNumbers(input);
 
 		assertThat(solution, is(520_135L));
+	}
+
+	@Test
+	void part2_example() {
+		var input = contentOf("day03_example.txt");
+
+		var solution = sumOfGearRatios(input);
+
+		assertThat(solution, is(467_835L));
+	}
+
+	@Test
+	void part2() {
+		var input = contentOf("day03.txt");
+
+		var solution = sumOfGearRatios(input);
+
+		assertThat(solution, is(72_514_855L));
 	}
 }

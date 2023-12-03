@@ -2,11 +2,10 @@ package de.mvitz.aoc2023;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
 
-import static java.util.function.Predicate.not;
+import static java.util.Collections.unmodifiableList;
 
 final class Day03 {
 
@@ -14,81 +13,198 @@ final class Day03 {
 	}
 
 	static long sumOfPartNumbers(String input) {
-		var engine = new Engine(input.lines()
-				.map(line -> line.split(""))
-				.toArray(String[][]::new));
-		return engine.partNumbers().sum();
+		return Engine.from(input)
+				.partNumbers().stream()
+				.mapToLong(Engine.Number::value)
+				.sum();
 	}
 
-	@SuppressWarnings("java:S6218")
-	record Engine(String[][] schematic) {
+	static long sumOfGearRatios(String input) {
+		return Engine.from(input)
+				.gears().stream()
+				.mapToLong(Engine.Gear::ratio)
+				.sum();
+	}
 
-		private static final Set<String> DIGITS = Set.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+	private static final class Engine {
 
-		LongStream partNumbers() {
-			return numbers()
-					.filter(this::isPartNumber)
-					.map(Number::value)
-					.mapToLong(Long::parseLong);
+		private final String[][] schematic;
+
+		private Engine(String[][] schematic) {
+			this.schematic = schematic;
 		}
 
-		private Stream<Number> numbers() {
-			List<Number> numbers = new ArrayList<>();
+		public List<Number> partNumbers() {
+			return numbers().stream()
+					.filter(this::isPartNumber)
+					.toList();
+		}
+
+		private List<Number> numbers() {
+			var numbers = new ArrayList<Number>();
 			Number currentNumber = null;
-			for (var y = 0; y < schematic.length; y++) {
-				var line = schematic[y];
-				for (var x = 0; x < line.length; x++) {
-					var cell = valueOf(x, y);
-					if (DIGITS.contains(cell)) {
-						if (currentNumber == null) {
-							currentNumber = new Number(cell, new Point(x, y));
+			for (var cell : cells()) {
+				if (cell.isDigit()) {
+					if (currentNumber == null) {
+						currentNumber = Number.of(cell);
+					} else {
+						if (currentNumber.isInSameLineThen(cell)) {
+							currentNumber = currentNumber.append(cell);
 						} else {
-							currentNumber = new Number(currentNumber.value + cell, currentNumber.start);
+							numbers.add(currentNumber);
+							currentNumber = null;
 						}
-					} else if (currentNumber != null) {
-						numbers.add(currentNumber);
-						currentNumber = null;
 					}
-				}
-				if (currentNumber != null) {
+				} else if (currentNumber != null) {
 					numbers.add(currentNumber);
 					currentNumber = null;
 				}
 			}
-			return numbers.stream();
+			if (currentNumber != null) {
+				numbers.add(currentNumber);
+			}
+			return numbers;
+		}
+
+		private List<Cell> cells() {
+			var cells = new ArrayList<Cell>();
+			for (var y = 0; y < schematic.length; y++) {
+				var line = schematic[y];
+				for (var x = 0; x < line.length; x++) {
+					var point = new Point(x, y);
+					cells.add(new Cell(point, valueOf(point).orElseThrow()));
+				}
+			}
+			return cells;
+		}
+
+		private Optional<String> valueOf(Point point) {
+			if (point.y < 0 || point.y >= schematic.length) {
+				return Optional.empty();
+			}
+			var line = schematic[point.y];
+			if (point.x < 0 || point.x >= line.length) {
+				return Optional.empty();
+			}
+			return Optional.of(line[point.x]);
 		}
 
 		private boolean isPartNumber(Number number) {
-			return adjacentCellsOf(number)
-					.filter(not("."::equals))
-					.anyMatch(not(DIGITS::contains));
+			return adjacentCellsOf(number).stream()
+					.anyMatch(Cell::isSymbol);
 		}
 
-		private Stream<String> adjacentCellsOf(Number number) {
-			List<String> cells = new ArrayList<>();
-			for (var yd = -1; yd < 2; yd++) {
-				for (var xd = -1; xd < (1 + number.value.length()); xd++) {
-					cells.add(valueOf(number.start.x + xd, number.start.y + yd));
+		private List<Cell> adjacentCellsOf(Number number) {
+			var cells = new ArrayList<Cell>();
+			for (var y = number.start().y - 1; y < number.start().y + 2; y++) {
+				for (var x = number.start().x - 1; x < number.end().x + 2; x++) {
+					var point = new Point(x, y);
+					valueOf(point)
+							.map(value -> new Cell(point, value))
+							.ifPresent(cells::add);
 				}
 			}
-			return cells.stream().filter(not(String::isBlank));
+			return cells;
 		}
 
-		private String valueOf(int x, int y) {
-			if (y >= schematic.length || y < 0) {
-				return "";
-			}
-			var line = schematic[y];
-			if (x >= line.length || x < 0) {
-				return "";
-			}
-			return line[x];
+		public List<Gear> gears() {
+			return cells().stream()
+					.filter(Cell::isGear)
+					.map(cell -> {
+						var numbers = adjacentNumbersOf(cell);
+						if (numbers.size() != 2) {
+							return Optional.<Gear>empty();
+						}
+						var ratio = numbers.getFirst().value() * numbers.getLast().value();
+						return Optional.of(new Gear(cell.point, ratio));
+					})
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.toList();
 		}
 
-		record Number(String value, Point start) {
+		private List<Number> adjacentNumbersOf(Cell cell) {
+			return numbers().stream()
+					.filter(number -> number.isAdjacentOf(cell.point))
+					.toList();
+		}
+
+		private static Engine from(String input) {
+			return new Engine(input.lines()
+					.map(line -> line.split(""))
+					.toArray(String[][]::new));
+		}
+
+		record Cell(Point point, String value) {
+
+			private static final Set<String> DIGITS = Set.of("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+
+			public boolean isDigit() {
+				return DIGITS.contains(value);
+			}
+
+			public boolean isSymbol() {
+				return !isDigit() && !isEmpty();
+			}
+
+			public boolean isEmpty() {
+				return ".".equals(value);
+			}
+
+			public boolean isGear() {
+				return "*".equals(value);
+			}
 		}
 
 		record Point(int x, int y) {
+		}
+
+		record Number(List<Cell> cells) {
+
+			public Number append(Cell cell) {
+				var cells = new ArrayList<>(this.cells);
+				cells.add(cell);
+
+				return new Number(unmodifiableList(cells));
+			}
+
+			public long value() {
+				return cells.stream()
+						.map(Cell::value)
+						.mapToLong(Long::parseLong)
+						.reduce((a, b) -> (a * 10) + b)
+						.orElse(0L);
+			}
+
+			public boolean isInSameLineThen(Cell cell) {
+				return start().y == cell.point.y;
+			}
+
+			public Point start() {
+				return cells.getFirst().point;
+			}
+
+			public Point end() {
+				return cells.getLast().point;
+			}
+
+			public boolean isAdjacentOf(Point point) {
+				var start = cells.getFirst().point;
+				var end = cells.getLast().point;
+				return isBetween(point.y, start.y - 1, start.y + 1)
+					   && isBetween(point.x, start.x - 1, end.x + 1);
+			}
+
+			public static Number of(Cell cell) {
+				return new Number(List.of(cell));
+			}
+
+			private static boolean isBetween(int value, int min, int max) {
+				return value >= min && value <= max;
+			}
+		}
+
+		record Gear(Point point, long ratio) {
 		}
 	}
 }
