@@ -22,12 +22,13 @@ final class Day04 {
 
 	static long totalNumberOfScratchcards(String input) {
 		var stack = new HashMap<Integer, Long>();
-		for (var stackcard : scratchcardsFrom(input)) {
-			var stackcardCount = stack.merge(stackcard.number, 1L, Long::sum);
-			for (var i = 1; i <= stackcard.numberOfMatchingNumbers(); i++) {
-				stack.merge(stackcard.number + i, stackcardCount, Long::sum);
+		scratchcardsFrom(input).forEach(scratchcard -> {
+			var number = scratchcard.number;
+			var scratchcardCount = stack.merge(number, 1L, Long::sum);
+			for (var i = 1; i <= scratchcard.numberOfMatchingNumbers(); i++) {
+				stack.merge(number + i, scratchcardCount, Long::sum);
 			}
-		}
+		});
 		return stack.values().stream()
 				.mapToLong(Long::longValue)
 				.sum();
@@ -39,7 +40,8 @@ final class Day04 {
 				.toList();
 	}
 
-	record Scratchcard(int number, Set<Long> winningNumbers, Set<Long> numbers) {
+	record Scratchcard(int number, Set<Long> winningNumbers,
+					   Set<Long> numbers) {
 
 		public long numberOfMatchingNumbers() {
 			return winningNumbers.stream()
