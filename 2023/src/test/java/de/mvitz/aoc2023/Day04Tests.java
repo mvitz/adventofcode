@@ -2,6 +2,7 @@ package de.mvitz.aoc2023;
 
 import org.junit.jupiter.api.Test;
 
+import static de.mvitz.aoc2023.Day04.totalNumberOfScratchcards;
 import static de.mvitz.aoc2023.Day04.totalScratchcardPoints;
 import static de.mvitz.aoc2023.Utils.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -25,5 +26,23 @@ class Day04Tests {
 		var solution = totalScratchcardPoints(input);
 
 		assertThat(solution, is(20_855L));
+	}
+
+	@Test
+	void part2_example() {
+		var input = contentOf("day04_example.txt");
+
+		var solution = totalNumberOfScratchcards(input);
+
+		assertThat(solution, is(30L));
+	}
+
+	@Test
+	void part2() {
+		var input = contentOf("day04.txt");
+
+		var solution = totalNumberOfScratchcards(input);
+
+		assertThat(solution, is(5_489_600L));
 	}
 }
