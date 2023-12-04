@@ -1,9 +1,6 @@
 package de.mvitz.aoc2023;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static java.math.BigInteger.TWO;
 import static java.util.function.Predicate.not;
@@ -21,17 +18,16 @@ final class Day04 {
 	}
 
 	static long totalNumberOfScratchcards(String input) {
-		var stack = new HashMap<Integer, Long>();
-		scratchcardsFrom(input).forEach(scratchcard -> {
-			var number = scratchcard.number;
-			var scratchcardCount = stack.merge(number, 1L, Long::sum);
-			for (var i = 1; i <= scratchcard.numberOfMatchingNumbers(); i++) {
-				stack.merge(number + i, scratchcardCount, Long::sum);
+		var pile = new ScratchcardPile();
+
+		scratchcardsFrom(input).forEach(card -> {
+			var scratchcardCount = pile.put(card.number);
+			for (var i = 1; i <= card.numberOfMatchingNumbers(); i++) {
+				pile.put(card.number + i, scratchcardCount);
 			}
 		});
-		return stack.values().stream()
-				.mapToLong(Long::longValue)
-				.sum();
+
+		return pile.numberOfCards();
 	}
 
 	static List<Scratchcard> scratchcardsFrom(String input) {
@@ -40,8 +36,26 @@ final class Day04 {
 				.toList();
 	}
 
-	record Scratchcard(int number, Set<Long> winningNumbers,
-					   Set<Long> numbers) {
+	private static class ScratchcardPile {
+
+		private final Map<Integer, Long> cards = new HashMap<>();
+
+		public long put(int cardNumber) {
+			return put(cardNumber, 1);
+		}
+
+		public long put(int cardNumber, long times) {
+			return cards.merge(cardNumber, times, Long::sum);
+		}
+
+		public long numberOfCards() {
+			return cards.values().stream()
+					.mapToLong(Long::longValue)
+					.sum();
+		}
+	}
+
+	record Scratchcard(int number, Set<Long> winningNumbers, Set<Long> numbers) {
 
 		public long numberOfMatchingNumbers() {
 			return winningNumbers.stream()
