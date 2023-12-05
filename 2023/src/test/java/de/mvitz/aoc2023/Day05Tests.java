@@ -2,8 +2,8 @@ package de.mvitz.aoc2023;
 
 import org.junit.jupiter.api.*;
 
-import static de.mvitz.aoc2023.Day05.lowestLocationNumberValues;
 import static de.mvitz.aoc2023.Day05.lowestLocationNumberRanges;
+import static de.mvitz.aoc2023.Day05.lowestLocationNumberValues;
 import static de.mvitz.aoc2023.Utils.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;

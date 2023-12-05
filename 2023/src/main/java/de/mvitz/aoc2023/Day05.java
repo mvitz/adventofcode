@@ -2,6 +2,7 @@ package de.mvitz.aoc2023;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.function.LongUnaryOperator;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
@@ -46,10 +47,11 @@ final class Day05 {
 		}
 
 		private boolean isValidLocation(long number) {
-			for (var map : maps) {
-				number = map.convert(number);
-			}
-			return seeds.contains(number);
+			var seed = maps.stream()
+					.map(map -> (LongUnaryOperator) map::convert)
+					.reduce(LongUnaryOperator.identity(), LongUnaryOperator::andThen, LongUnaryOperator::andThen)
+					.applyAsLong(number);
+			return seeds.contain(seed);
 		}
 
 		public static Almanac from(String input, Function<Iterator<String>, Seeds> seedsParser) {
@@ -73,13 +75,9 @@ final class Day05 {
 				this.values = values;
 			}
 
-			public boolean contains(long number) {
-				for (var value : values) {
-					if (value.contains(number)) {
-						return true;
-					}
-				}
-				return false;
+			public boolean contain(long number) {
+				return values.stream()
+						.anyMatch(value -> value.contains(number));
 			}
 
 			public static Seeds valuesFrom(Iterator<String> lines) {
