@@ -43,13 +43,21 @@
 		<plugins>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
 				<configuration>
 					<source>${java.version}</source>
 					<target>${java.version}</target>
+					<release>${java.version}</release>
 					<compilerArgs>
-						<release>${java.version}</release>
 						<arg>--enable-preview</arg>
 					</compilerArgs>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.2.2</version>
+				<configuration>
+					<argLine>--enable-preview -Xmx8192m</argLine>
 				</configuration>
 			</plugin>
 		</plugins>
