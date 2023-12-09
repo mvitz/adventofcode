@@ -20,7 +20,7 @@ class Day09Tests {
 	void part1_example() {
 		var input = contentOf("day09_example.txt");
 
-		var solution = sumOfExtrapolatedValues(input);
+		var solution = sumOfForwardExtrapolatedValues(input);
 
 		assertThat(solution, is(114L));
 	}
@@ -66,7 +66,7 @@ class Day09Tests {
 	void part1() {
 		var input = contentOf("day09.txt");
 
-		var solution = sumOfExtrapolatedValues(input);
+		var solution = sumOfForwardExtrapolatedValues(input);
 
 		assertThat(solution, is(1_798_691_765L));
 	}
