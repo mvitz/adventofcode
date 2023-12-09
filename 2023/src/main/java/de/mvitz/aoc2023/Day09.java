@@ -12,7 +12,14 @@ final class Day09 {
 	static long sumOfExtrapolatedValues(String input) {
 		return input.lines()
 				.map(Day09::parseHistory)
-				.mapToLong(Day09::extrapolationFor)
+				.mapToLong(Day09::forwardExtrapolationFor)
+				.sum();
+	}
+
+	static long sumOfBackwardsExtrapolatedValues(String input) {
+		return input.lines()
+				.map(Day09::parseHistory)
+				.mapToLong(Day09::backwardsExtrapolationFor)
 				.sum();
 	}
 
@@ -22,7 +29,7 @@ final class Day09 {
 				.toList();
 	}
 
-	static long extrapolationFor(List<Long> history) {
+	static long forwardExtrapolationFor(List<Long> history) {
 		var sequences = new ArrayList<List<Long>>();
 		sequences.add(history);
 
@@ -41,5 +48,18 @@ final class Day09 {
 			differences.add(values.get(i + 1) - values.get(i));
 		}
 		return differences;
+	}
+
+	static long backwardsExtrapolationFor(List<Long> history) {
+		var sequences = new ArrayList<List<Long>>();
+		sequences.add(history);
+
+		while (!sequences.getLast().stream().allMatch(value -> value == 0)) {
+			sequences.add(differencesBetweenValues(sequences.getLast()));
+		}
+
+		return sequences.reversed().stream()
+				.map(List::getFirst)
+				.reduce(0L, (first, second) -> second - first);
 	}
 }
