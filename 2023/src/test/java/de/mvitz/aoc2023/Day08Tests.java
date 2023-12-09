@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 
+import static de.mvitz.aoc2023.Day08.numberOfGhostStepsToReachTarget;
 import static de.mvitz.aoc2023.Day08.numberOfStepsToReachTarget;
 import static de.mvitz.aoc2023.Utils.contentOf;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,5 +42,25 @@ class Day08Tests {
 		var solution = numberOfStepsToReachTarget(input);
 
 		assertThat(solution, is(11_309L));
+	}
+
+	@Test
+	@Order(3)
+	void part2_example() {
+		var input = contentOf("day08_example3.txt");
+
+		var solution = numberOfGhostStepsToReachTarget(input);
+
+		assertThat(solution, is(6L));
+	}
+
+	@Test
+	@Order(4)
+	void part2() {
+		var input = contentOf("day08.txt");
+
+		var solution = numberOfGhostStepsToReachTarget(input);
+
+		assertThat(solution, is(13_740_108_158_591L));
 	}
 }

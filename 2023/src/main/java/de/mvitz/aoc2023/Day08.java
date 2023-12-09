@@ -1,11 +1,10 @@
 package de.mvitz.aoc2023;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 final class Day08 {
 
@@ -14,13 +13,36 @@ final class Day08 {
 
 	static long numberOfStepsToReachTarget(String input) {
 		var directions = parseDirections(input);
-		var map = parseMap(input);
+		var start = parseMap(input).get("AAA");
+
+		return numberOfStepsUntil(start, directions, node -> node.name.equals("ZZZ"));
+	}
+
+	static long numberOfGhostStepsToReachTarget(String input) {
+		var nodes = parseMap(input)
+				.values().stream()
+				.filter(node -> node.name.endsWith("A"))
+				.collect(Collectors.toSet());
+
+		var steps = nodes.stream()
+				.map(node -> {
+					var directions = parseDirections(input);
+					return numberOfStepsUntil(node, directions, n -> n.name.endsWith("Z"));
+				})
+				.collect(Collectors.toSet());
+
+		return steps.stream().reduce(Day08::lcm).orElseThrow();
+	}
+
+	private static long numberOfStepsUntil(Node start, Iterator<Direction> directions, Predicate<Node> predicate) {
+		var node = start;
 
 		var steps = 0;
-		while (!map.name.equals("ZZZ")) {
-			map = directions.next().apply(map);
+		while (!predicate.test(node)) {
+			node = directions.next().apply(node);
 			steps++;
 		}
+
 		return steps;
 	}
 
@@ -33,9 +55,9 @@ final class Day08 {
 				.toList());
 	}
 
-	private static final Pattern NODE_PATTERN = Pattern.compile("([A-Z]{3}) = \\(([A-Z]{3}), ([A-Z]{3})\\)");
+	private static final Pattern NODE_PATTERN = Pattern.compile("(\\w{3}) = \\((\\w{3}), (\\w{3})\\)");
 
-	private static Node parseMap(String input) {
+	private static Map<String, Node> parseMap(String input) {
 		var map = new HashMap<String, Node>();
 		input.lines()
 				.skip(2)
@@ -46,7 +68,24 @@ final class Day08 {
 					node.left = map.computeIfAbsent(line.group(2), Node::new);
 					node.right = map.computeIfAbsent(line.group(3), Node::new);
 				});
-		return map.get("AAA");
+		return map;
+	}
+
+	private static long gcd(long first, long second) {
+		if (first == 0 || second == 0) {
+			return first + second;
+		}
+		var big = Math.max(Math.abs(first), Math.abs(second));
+		var small = Math.min(Math.abs(first), Math.abs(second));
+		return gcd(big % small, small);
+	}
+
+	public static long lcm(long first, long second) {
+		if (first == 0 || second == 0) {
+			return 0;
+		}
+		var gcd = gcd(first, second);
+		return Math.abs(first * second) / gcd;
 	}
 
 	private static final class Node {
@@ -58,6 +97,11 @@ final class Day08 {
 
 		public Node(String name) {
 			this.name = name;
+		}
+
+		@Override
+		public String toString() {
+			return STR."\{name} = (\{left.name}, \{right.name})";
 		}
 	}
 
