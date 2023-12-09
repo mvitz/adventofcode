@@ -16,6 +16,15 @@ final class Day06 {
 				.orElseThrow();
 	}
 
+	static long numberOfRecordingBeatingWaysFor(String input) {
+		var lines = input.lines().toList();
+
+		return new Race(
+				Long.parseLong(lines.getFirst().substring("Time:".length()).replaceAll("\\s+", "")),
+				Long.parseLong(lines.getLast().substring("Distance:".length()).replaceAll("\\s+", ""))
+		).numberOfWaysToBeatRecord();
+	}
+
 	private static List<Race> parse(String input) {
 		var lines = input.lines().toList();
 
