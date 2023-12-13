@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.ToLongFunction;
+import java.util.stream.Gatherers;
 
 final class Day09 {
 
@@ -38,11 +39,10 @@ final class Day09 {
 	}
 
 	static List<Long> differencesBetweenValues(List<Long> values) {
-		var differences = new ArrayList<Long>();
-		for (var i = 0; i < values.size() - 1; i++) {
-			differences.add(values.get(i + 1) - values.get(i));
-		}
-		return differences;
+		return values.stream()
+				.gather(Gatherers.windowSliding(2))
+				.map(window -> window.getLast() - window.getFirst())
+				.toList();
 	}
 
 	static long backwardsExtrapolationFor(List<Long> history) {
