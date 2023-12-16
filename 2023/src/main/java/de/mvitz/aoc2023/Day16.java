@@ -5,6 +5,8 @@ import de.mvitz.aoc2023.Utils.Pair;
 import de.mvitz.aoc2023.Utils.Point;
 
 import java.util.*;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static de.mvitz.aoc2023.Day16.Contraption.Direction.*;
 import static java.util.stream.Collectors.toSet;
@@ -20,7 +22,23 @@ final class Day16 {
 				.size();
 	}
 
-	record Contraption(List<Tile> tiles) {
+	static int maximumNumberOfEnergizedTilesFor(String input) {
+		var contraption = Contraption.parse(input);
+
+		return Stream.concat(
+						IntStream.range(0, contraption.width)
+								.boxed()
+								.flatMap(x -> Stream.of(Pair.of(new Point(x, 0), DOWN), Pair.of(new Point(x, contraption.height - 1), UP))),
+						IntStream.range(0, contraption.height)
+								.boxed()
+								.flatMap(y -> Stream.of(Pair.of(new Point(0, y), RIGHT), Pair.of(new Point(contraption.width - 1, y), LEFT))))
+				.parallel()
+				.mapToInt(start -> contraption.beam(start.first(), start.second()).size())
+				.max().orElseThrow();
+
+	}
+
+	record Contraption(int height, int width, List<Tile> tiles) {
 
 		public Set<Point> beam(Point start, Direction direction) {
 			var seen = new HashSet<Pair<Point, Direction>>();
@@ -61,7 +79,10 @@ final class Day16 {
 				}
 			}
 
-			return new Contraption(tiles);
+			return new Contraption(
+					lines.size(),
+					lines.getFirst().split("").length,
+					tiles);
 		}
 
 		enum Direction {
