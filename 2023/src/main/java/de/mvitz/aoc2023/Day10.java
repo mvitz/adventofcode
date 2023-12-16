@@ -1,5 +1,7 @@
 package de.mvitz.aoc2023;
 
+import de.mvitz.aoc2023.Utils.Point;
+
 import java.util.*;
 
 import static java.util.function.Predicate.not;
@@ -77,9 +79,6 @@ final class Day10 {
 		}
 	}
 
-	public record Point(int x, int y) {
-	}
-
 	sealed interface Tile {
 
 		Point point();
@@ -105,9 +104,7 @@ final class Day10 {
 
 			@Override
 			public Set<Point> connects() {
-				return Set.of(
-						new Point(point.x, point.y - 1),
-						new Point(point.x, point.y + 1));
+				return Set.of(point.below(), point.above());
 			}
 		}
 
@@ -115,9 +112,7 @@ final class Day10 {
 
 			@Override
 			public Set<Point> connects() {
-				return Set.of(
-						new Point(point.x - 1, point.y),
-						new Point(point.x + 1, point.y));
+				return Set.of(point.left(), point.right());
 			}
 		}
 
@@ -125,9 +120,7 @@ final class Day10 {
 
 			@Override
 			public Set<Point> connects() {
-				return Set.of(
-						new Point(point.x, point.y - 1),
-						new Point(point.x + 1, point.y));
+				return Set.of(point.above(), point.right());
 			}
 		}
 
@@ -135,9 +128,7 @@ final class Day10 {
 
 			@Override
 			public Set<Point> connects() {
-				return Set.of(
-						new Point(point.x, point.y - 1),
-						new Point(point.x - 1, point.y));
+				return Set.of(point.above(), point.left());
 			}
 		}
 
@@ -145,9 +136,7 @@ final class Day10 {
 
 			@Override
 			public Set<Point> connects() {
-				return Set.of(
-						new Point(point.x, point.y + 1),
-						new Point(point.x - 1, point.y));
+				return Set.of(point.below(), point.left());
 			}
 		}
 
@@ -155,9 +144,7 @@ final class Day10 {
 
 			@Override
 			public Set<Point> connects() {
-				return Set.of(
-						new Point(point.x, point.y + 1),
-						new Point(point.x + 1, point.y));
+				return Set.of(point.below(), point.right());
 			}
 		}
 
@@ -173,11 +160,7 @@ final class Day10 {
 
 			@Override
 			public Set<Point> connects() {
-				return Set.of(
-						new Point(point.x, point.y - 1),
-						new Point(point.x + 1, point.y),
-						new Point(point.x, point.y + 1),
-						new Point(point.x - 1, point.y));
+				return Set.of(point.above(), point.right(), point.below(), point.left());
 			}
 		}
 	}

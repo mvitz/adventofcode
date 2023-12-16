@@ -1,5 +1,7 @@
 package de.mvitz.aoc2023;
 
+import de.mvitz.aoc2023.Utils.Point;
+
 import java.util.*;
 
 import static de.mvitz.aoc2023.Day14.Platform.Direction.*;
@@ -21,16 +23,13 @@ final class Day14 {
 				.totalLoad();
 	}
 
-	record Point(int x, int y) {
-	}
-
 	sealed interface Rock {
 
 		Point point();
 
 		default long load() {
 			return switch (this) {
-				case RoundedRock _ -> point().y + 1;
+				case RoundedRock _ -> point().y() + 1;
 				case CubeShapedRock _ -> 0;
 			};
 		}
@@ -96,15 +95,15 @@ final class Day14 {
 
 		private List<Rock> rocksInColumn(int column) {
 			return rocks.stream()
-					.filter(rock -> rock.point().x == column)
-					.sorted(Comparator.<Rock, Integer>comparing(rock -> rock.point().y).reversed())
+					.filter(rock -> rock.point().isInColumn(column))
+					.sorted(Comparator.<Rock, Integer>comparing(rock -> rock.point().y()).reversed())
 					.toList();
 		}
 
 		private List<Rock> rocksInRow(int row) {
 			return rocks.stream()
-					.filter(rock -> rock.point().y == row)
-					.sorted(Comparator.<Rock, Integer>comparing(rock -> rock.point().x).reversed())
+					.filter(rock -> rock.point().isInRow(row))
+					.sorted(Comparator.<Rock, Integer>comparing(rock -> rock.point().x()).reversed())
 					.toList();
 		}
 
@@ -161,7 +160,7 @@ final class Day14 {
 								highestReachablePoint--;
 							} else {
 								rocks.add(rock);
-								highestReachablePoint = rock.point().y - 1;
+								highestReachablePoint = rock.point().y() - 1;
 							}
 						}
 					}
@@ -182,7 +181,7 @@ final class Day14 {
 								mostLeftReachablePoint++;
 							} else {
 								rocks.add(rock);
-								mostLeftReachablePoint = rock.point().x + 1;
+								mostLeftReachablePoint = rock.point().x() + 1;
 							}
 						}
 					}
@@ -203,7 +202,7 @@ final class Day14 {
 								lowestReachablePoint++;
 							} else {
 								rocks.add(rock);
-								lowestReachablePoint = rock.point().y + 1;
+								lowestReachablePoint = rock.point().y() + 1;
 							}
 						}
 					}
@@ -224,7 +223,7 @@ final class Day14 {
 								mostRightReachablePoint--;
 							} else {
 								rocks.add(rock);
-								mostRightReachablePoint = rock.point().x - 1;
+								mostRightReachablePoint = rock.point().x() - 1;
 							}
 						}
 					}

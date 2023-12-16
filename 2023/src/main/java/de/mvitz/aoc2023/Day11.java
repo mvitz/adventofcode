@@ -1,5 +1,8 @@
 package de.mvitz.aoc2023;
 
+import de.mvitz.aoc2023.Utils.Pair;
+import de.mvitz.aoc2023.Utils.Point;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,37 +17,31 @@ final class Day11 {
 		return sumOfAllShortestPathsBetweenOlderGalaxyPairs(input, 2);
 	}
 
-	static long sumOfAllShortestPathsBetweenOlderGalaxyPairs(String input, long factor) {
+	static long sumOfAllShortestPathsBetweenOlderGalaxyPairs(String input, int factor) {
 		return Universe.parse(input)
 				.expand(factor - 1)
 				.galaxyPairs().stream()
-				.mapToLong(Pair::shortestPathBetween)
+				.mapToLong(Day11::shortestPathBetween)
 				.sum();
 	}
 
-	record Point(long x, long y) {
-	}
-
-	record Pair(Point first, Point second) {
-
-		long shortestPathBetween() {
-			return Math.abs(first.x - second.x) + Math.abs(first.y - second.y);
-		}
+	static int shortestPathBetween(Pair<Point, Point> points) {
+		return Math.abs(points.first().x() - points.second().x()) + Math.abs(points.first().y() - points.second().y());
 	}
 
 	record Universe(List<Point> galaxies) {
 
-		Universe expand(long factor) {
+		Universe expand(int factor) {
 			return new Universe(shiftColumns(shiftRows(galaxies, factor), factor));
 		}
 
-		Set<Pair> galaxyPairs() {
-			var pairs = new HashSet<Pair>();
+		Set<Pair<Point, Point>> galaxyPairs() {
+			var pairs = new HashSet<Pair<Point, Point>>();
 
 			for (var i = 0; i < galaxies.size(); i++) {
 				var first = galaxies.get(i);
 				for (var j = i + 1; j < galaxies.size(); j++) {
-					pairs.add(new Pair(first, galaxies.get(j)));
+					pairs.add(Pair.of(first, galaxies.get(j)));
 				}
 			}
 
@@ -67,17 +64,17 @@ final class Day11 {
 			return new Universe(galaxies);
 		}
 
-		private static List<Point> shiftRows(List<Point> galaxies, long factor) {
+		private static List<Point> shiftRows(List<Point> galaxies, int factor) {
 			var shiftedGalaxies = new ArrayList<Point>();
 
-			var shift = 0L;
+			var shift = 0;
 			for (var row = 0; row < rows(galaxies); row++) {
 				var galaxiesInRow = galaxiesInRow(galaxies, row);
 				if (galaxiesInRow.isEmpty()) {
 					shift += factor;
 				} else {
 					for (var galaxy : galaxiesInRow) {
-						shiftedGalaxies.add(new Point(galaxy.x, galaxy.y + shift));
+						shiftedGalaxies.add(new Point(galaxy.x(), galaxy.y() + shift));
 					}
 				}
 			}
@@ -92,23 +89,23 @@ final class Day11 {
 						   .orElse(-1) + 1;
 		}
 
-		private static List<Point> galaxiesInRow(List<Point> galaxies, long row) {
+		private static List<Point> galaxiesInRow(List<Point> galaxies, int row) {
 			return galaxies.stream()
-					.filter(galaxy -> galaxy.y == row)
+					.filter(galaxy -> galaxy.isInRow(row))
 					.toList();
 		}
 
-		private static List<Point> shiftColumns(List<Point> galaxies, long factor) {
+		private static List<Point> shiftColumns(List<Point> galaxies, int factor) {
 			var shiftedGalaxies = new ArrayList<Point>();
 
-			var shift = 0L;
+			var shift = 0;
 			for (var column = 0; column < columns(galaxies); column++) {
 				var galaxiesInColumn = galaxiesInColumn(galaxies, column);
 				if (galaxiesInColumn.isEmpty()) {
 					shift += factor;
 				} else {
 					for (var galaxy : galaxiesInColumn) {
-						shiftedGalaxies.add(new Point(galaxy.x + shift, galaxy.y));
+						shiftedGalaxies.add(new Point(galaxy.x() + shift, galaxy.y()));
 					}
 				}
 			}
@@ -123,9 +120,9 @@ final class Day11 {
 						   .orElse(-1) + 1;
 		}
 
-		private static List<Point> galaxiesInColumn(List<Point> galaxies, long column) {
+		private static List<Point> galaxiesInColumn(List<Point> galaxies, int column) {
 			return galaxies.stream()
-					.filter(galaxy -> galaxy.x == column)
+					.filter(galaxy -> galaxy.isInColumn(column))
 					.toList();
 		}
 	}

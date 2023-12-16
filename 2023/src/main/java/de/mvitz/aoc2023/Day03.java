@@ -1,10 +1,13 @@
 package de.mvitz.aoc2023;
 
+import de.mvitz.aoc2023.Utils.Point;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static de.mvitz.aoc2023.Utils.isBetween;
 import static java.util.Collections.unmodifiableList;
 
 final class Day03 {
@@ -79,14 +82,11 @@ final class Day03 {
 		}
 
 		private Optional<String> valueOf(Point point) {
-			if (point.y < 0 || point.y >= schematic.length) {
+			if (!point.isInBoundsOf(schematic[0].length - 1, schematic.length - 1)) {
 				return Optional.empty();
 			}
-			var line = schematic[point.y];
-			if (point.x < 0 || point.x >= line.length) {
-				return Optional.empty();
-			}
-			return Optional.of(line[point.x]);
+
+			return Optional.of(schematic[point.y()][point.x()]);
 		}
 
 		private boolean isPartNumber(Number number) {
@@ -96,8 +96,8 @@ final class Day03 {
 
 		private List<Cell> adjacentCellsOf(Number number) {
 			var cells = new ArrayList<Cell>();
-			for (var y = number.start().y - 1; y < number.start().y + 2; y++) {
-				for (var x = number.start().x - 1; x < number.end().x + 2; x++) {
+			for (var y = number.start().y() - 1; y < number.start().y() + 2; y++) {
+				for (var x = number.start().x() - 1; x < number.end().x() + 2; x++) {
 					var point = new Point(x, y);
 					valueOf(point)
 							.map(value -> new Cell(point, value))
@@ -156,9 +156,6 @@ final class Day03 {
 			}
 		}
 
-		record Point(int x, int y) {
-		}
-
 		record Number(List<Cell> cells) {
 
 			public Number append(Cell cell) {
@@ -177,7 +174,7 @@ final class Day03 {
 			}
 
 			public boolean isInSameLineThen(Cell cell) {
-				return start().y == cell.point.y;
+				return start().inSameRowAs(cell.point);
 			}
 
 			public Point start() {
@@ -191,16 +188,12 @@ final class Day03 {
 			public boolean isAdjacentOf(Point point) {
 				var start = cells.getFirst().point;
 				var end = cells.getLast().point;
-				return isBetween(point.y, start.y - 1, start.y + 1)
-					   && isBetween(point.x, start.x - 1, end.x + 1);
+				return isBetween(point.y(), start.y() - 2, start.y() + 2)
+					   && isBetween(point.x(), start.x() - 2, end.x() + 2);
 			}
 
 			public static Number of(Cell cell) {
 				return new Number(List.of(cell));
-			}
-
-			private static boolean isBetween(int value, int min, int max) {
-				return value >= min && value <= max;
 			}
 		}
 

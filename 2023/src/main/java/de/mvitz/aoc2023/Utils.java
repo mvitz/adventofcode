@@ -29,10 +29,58 @@ final class Utils {
 				.orElseThrow();
 	}
 
+	public static boolean isBetween(int value, int min, int max) {
+		return value > min && value < max;
+	}
+
 	public record Pair<T, U>(T first, U second) {
 
 		public static <T, U> Pair<T, U> of(T first, U second) {
 			return new Pair<>(first, second);
+		}
+	}
+
+	public record Point(int x, int y) {
+
+		public Point above() {
+			return new Point(x, y - 1);
+		}
+
+		public Point below() {
+			return new Point(x, y + 1);
+		}
+
+		public Point left() {
+			return new Point(x - 1, y);
+		}
+
+		public Point right() {
+			return new Point(x + 1, y);
+		}
+
+		public boolean inSameColumnAs(Point other) {
+			return isInColumn(other.x);
+		}
+
+		public boolean isInColumn(int column) {
+			return column == x;
+		}
+
+		public boolean inSameRowAs(Point other) {
+			return isInRow(other.y);
+		}
+
+		public boolean isInRow(int row) {
+			return row == y;
+		}
+
+		public boolean isInBoundsOf(int xmax, int ymax) {
+			return isInBoundsOf(0, xmax, 0, ymax);
+		}
+
+		public boolean isInBoundsOf(int xmin, int xmax, int ymin, int ymax) {
+			return isBetween(x, xmin - 1, xmax + 1)
+				   && isBetween(y, ymin - 1, ymax + 1);
 		}
 	}
 }

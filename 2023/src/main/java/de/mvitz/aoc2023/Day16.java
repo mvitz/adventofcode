@@ -2,6 +2,7 @@
 package de.mvitz.aoc2023;
 
 import de.mvitz.aoc2023.Utils.Pair;
+import de.mvitz.aoc2023.Utils.Point;
 
 import java.util.*;
 
@@ -17,25 +18,6 @@ final class Day16 {
 		return Contraption.parse(input)
 				.beam(new Point(0, 0), RIGHT)
 				.size();
-	}
-
-	public record Point(int x, int y) {
-
-		public Point above() {
-			return new Point(x, y - 1);
-		}
-
-		public Point below() {
-			return new Point(x, y + 1);
-		}
-
-		public Point left() {
-			return new Point(x - 1, y);
-		}
-
-		public Point right() {
-			return new Point(x + 1, y);
-		}
 	}
 
 	record Contraption(List<Tile> tiles) {
