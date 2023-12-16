@@ -1,5 +1,6 @@
 package de.mvitz.aoc2023;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import static de.mvitz.aoc2023.Day02.sumOfMinimumCubesPower;
@@ -11,6 +12,7 @@ import static org.hamcrest.Matchers.is;
 class Day02Tests {
 
 	@Test
+	@Order(0)
 	void part1_example() {
 		var input = contentOf("day02_example.txt");
 
@@ -20,6 +22,7 @@ class Day02Tests {
 	}
 
 	@Test
+	@Order(1)
 	void part1() {
 		var input = contentOf("day02.txt");
 
@@ -29,6 +32,7 @@ class Day02Tests {
 	}
 
 	@Test
+	@Order(2)
 	void part2_example() {
 		var input = contentOf("day02_example.txt");
 
@@ -38,6 +42,7 @@ class Day02Tests {
 	}
 
 	@Test
+	@Order(3)
 	void part2() {
 		var input = contentOf("day02.txt");
 
