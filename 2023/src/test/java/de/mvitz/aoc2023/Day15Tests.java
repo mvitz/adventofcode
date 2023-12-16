@@ -7,8 +7,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static de.mvitz.aoc2023.Day15.hash;
-import static de.mvitz.aoc2023.Day15.sumOfHashedInitializationSequenceStepsFor;
+import static de.mvitz.aoc2023.Day15.*;
 import static de.mvitz.aoc2023.Utils.firstLineOf;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
@@ -35,7 +34,7 @@ class Day15Tests {
 			pc=6,214
 			ot=7,231
 			""")
-	void part1_hash(String string, long expectedHash) {
+	void part1_hash(String string, int expectedHash) {
 		var hash = hash(string);
 
 		assertThat(hash, is(expectedHash));
@@ -48,7 +47,7 @@ class Day15Tests {
 
 		var solution = sumOfHashedInitializationSequenceStepsFor(input);
 
-		assertThat(solution, is(1_320L));
+		assertThat(solution, is(1_320));
 	}
 
 	@Test
@@ -58,6 +57,26 @@ class Day15Tests {
 
 		var solution = sumOfHashedInitializationSequenceStepsFor(input);
 
-		assertThat(solution, is(506_437L));
+		assertThat(solution, is(506_437));
+	}
+
+	@Test
+	@Order(3)
+	void part2_example() {
+		var input = firstLineOf("day15_example.txt");
+
+		var solution = focusingPowerOfResultingLensConfigurationFor(input);
+
+		assertThat(solution, is(145));
+	}
+
+	@Test
+	@Order(4)
+	void part2() {
+		var input = firstLineOf("day15.txt");
+
+		var solution = focusingPowerOfResultingLensConfigurationFor(input);
+
+		assertThat(solution, is(288_521));
 	}
 }
