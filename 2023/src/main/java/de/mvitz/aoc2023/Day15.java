@@ -98,7 +98,7 @@ final class Day15 {
 
 		@Override
 		public String toString() {
-			return STR."Box \{number}: \{lenses.stream().map(Lens::toString).collect(joining(" "))}";
+			return "Box " + number + ": " + lenses.stream().map(Lens::toString).collect(joining(" "));
 		}
 
 		public static Box empty(int number) {
@@ -125,7 +125,7 @@ final class Day15 {
 
 			@Override
 			public String toString() {
-				return STR."[\{label} \{focalLength}]";
+				return "[" +  label + " " + focalLength + "]";
 			}
 		}
 	}

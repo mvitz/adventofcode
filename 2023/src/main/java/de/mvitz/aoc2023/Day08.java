@@ -101,7 +101,7 @@ final class Day08 {
 
 		@Override
 		public String toString() {
-			return STR."\{name} = (\{left.name}, \{right.name})";
+			return name + " = (" + left.name + ", " + right.name + ")";
 		}
 	}
 

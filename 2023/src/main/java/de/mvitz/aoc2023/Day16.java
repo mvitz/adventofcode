@@ -137,7 +137,7 @@ final class Day16 {
 					case DownwardMirror.TYPE -> new DownwardMirror(point);
 					case VerticalSplitter.TYPE -> new VerticalSplitter(point);
 					case HorizontalSplitter.TYPE -> new HorizontalSplitter(point);
-					default -> throw new IllegalArgumentException(STR."Found unknown type '\{type}' at point: \{point}");
+					default -> throw new IllegalArgumentException("Found unknown type '" + type + "' at point: " + point);
 				};
 			}
 

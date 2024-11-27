@@ -15,10 +15,10 @@ final class Utils {
 	@SuppressWarnings("java:S112")
 	public static String contentOf(String name) {
 		try {
-			final var resource = requireNonNull(Utils.class.getResource(STR."/\{name}")).toURI();
+			final var resource = requireNonNull(Utils.class.getResource("/" + name)).toURI();
 			return Files.readString(Path.of(resource));
 		} catch (URISyntaxException | IOException e) {
-			throw new RuntimeException(STR."Unable to read content of: \{name}", e);
+			throw new RuntimeException("Unable to read content of: " + name, e);
 		}
 	}
 
