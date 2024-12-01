@@ -5,7 +5,10 @@ import de.mvitz.aoc2024.utils.Pair;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Day01 {
+public final class Day01 {
+
+	private Day01() {
+	}
 
 	public static long findTotalDistanceBetweenLists(String input) {
 		var lists = parse(input);
@@ -18,6 +21,14 @@ public class Day01 {
 				.toList();
 
 		return totalDistanceBetween(left, right);
+	}
+
+	public static long findSimilarityScoreForLists(String input) {
+		var lists = parse(input);
+
+		return lists.left().stream()
+				.mapToLong(locationId -> similarityScoreFor(locationId, lists.right()))
+				.sum();
 	}
 
 	private static Pair<List<Integer>, List<Integer>> parse(String input) {
@@ -53,5 +64,9 @@ public class Day01 {
 
 	private static int distanceBetween(int left, int right) {
 		return Math.abs(left - right);
+	}
+
+	private static long similarityScoreFor(int left, List<Integer> right) {
+		return left * right.stream().filter(candidate -> candidate.equals(left)).count();
 	}
 }
