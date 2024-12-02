@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import static de.mvitz.aoc2024.day02.Day02.findNumberOfSafeReportsFrom;
+import static de.mvitz.aoc2024.day02.Day02.findNumberOfSafeReportsWithOneTolerationFrom;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Day02Tests {
@@ -34,7 +35,7 @@ class Day02Tests {
     @Order(1)
     void part1() {
         // given
-        var input = Files.contentOf("day02/part1.txt");
+        var input = Files.contentOf("day02/input.txt");
 
         // when
         var solution = findNumberOfSafeReportsFrom(input);
@@ -42,5 +43,40 @@ class Day02Tests {
         // then
         assertThat(solution)
                 .isEqualTo(269);
+    }
+
+    @Test
+    @Order(2)
+    void part2_example() {
+        // given
+        var input = """
+                7 6 4 2 1
+                1 2 7 8 9
+                9 7 6 2 1
+                1 3 2 4 5
+                8 6 4 4 1
+                1 3 6 7 9
+                """;
+
+        // when
+        var solution = findNumberOfSafeReportsWithOneTolerationFrom(input);
+
+        // then
+        assertThat(solution)
+                .isEqualTo(4);
+    }
+
+    @Test
+    @Order(3)
+    void part2() {
+        // given
+        var input = Files.contentOf("day02/input.txt");
+
+        // when
+        var solution = findNumberOfSafeReportsWithOneTolerationFrom(input);
+
+        // then
+        assertThat(solution)
+                .isEqualTo(337);
     }
 }

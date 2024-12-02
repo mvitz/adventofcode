@@ -10,9 +10,15 @@ public final class Reports {
 		this.values = values;
 	}
 
-	public long numberOfSaveReports() {
+	public long numberOfSafeReports() {
 		return values.stream()
 				.filter(Report::isSafe)
+				.count();
+	}
+
+	public long numberOfToleratedSafeReports() {
+		return values.stream()
+				.filter(Report::isToleratedSafe)
 				.count();
 	}
 

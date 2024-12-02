@@ -7,6 +7,11 @@ public final class Day02 {
 
 	public static long findNumberOfSafeReportsFrom(String input) {
 		return Reports.from(input)
-				.numberOfSaveReports();
+				.numberOfSafeReports();
+	}
+
+	public static long findNumberOfSafeReportsWithOneTolerationFrom(String input) {
+		return Reports.from(input)
+				.numberOfToleratedSafeReports();
 	}
 }
