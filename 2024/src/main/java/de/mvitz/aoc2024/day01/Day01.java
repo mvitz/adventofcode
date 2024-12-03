@@ -3,6 +3,7 @@ package de.mvitz.aoc2024.day01;
 import de.mvitz.aoc2024.utils.Pair;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public final class Day01 {
@@ -66,7 +67,7 @@ public final class Day01 {
 		return Math.abs(left - right);
 	}
 
-	private static long similarityScoreFor(int left, List<Integer> right) {
-		return left * right.stream().filter(candidate -> candidate.equals(left)).count();
+	private static int similarityScoreFor(int left, List<Integer> right) {
+		return left * Collections.frequency(right, left);
 	}
 }
