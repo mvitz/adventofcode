@@ -4,8 +4,8 @@ import de.mvitz.aoc2024.utils.Files;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
-import static de.mvitz.aoc2024.day04.Day04.findNumberOfXDashMasAppearencesIn;
-import static de.mvitz.aoc2024.day04.Day04.findNumberOfXmasAppearencesIn;
+import static de.mvitz.aoc2024.day04.Day04.findNumberOfXDashMasAppearancesIn;
+import static de.mvitz.aoc2024.day04.Day04.findNumberOfXmasAppearancesIn;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class Day04Tests {
@@ -28,7 +28,7 @@ class Day04Tests {
 				""";
 
 		// when
-		var solution = findNumberOfXmasAppearencesIn(input);
+		var solution = findNumberOfXmasAppearancesIn(input);
 
 		// then
 		assertThat(solution)
@@ -42,7 +42,7 @@ class Day04Tests {
 		var input = Files.contentOf("day04/input.txt");
 
 		// when
-		var solution = findNumberOfXmasAppearencesIn(input);
+		var solution = findNumberOfXmasAppearancesIn(input);
 
 		// then
 		assertThat(solution)
@@ -67,7 +67,7 @@ class Day04Tests {
 				""";
 
 		// when
-		var solution = findNumberOfXDashMasAppearencesIn(input);
+		var solution = findNumberOfXDashMasAppearancesIn(input);
 
 		// then
 		assertThat(solution)
@@ -81,7 +81,7 @@ class Day04Tests {
 		var input = Files.contentOf("day04/input.txt");
 
 		// when
-		var solution = findNumberOfXDashMasAppearencesIn(input);
+		var solution = findNumberOfXDashMasAppearancesIn(input);
 
 		// then
 		assertThat(solution)
