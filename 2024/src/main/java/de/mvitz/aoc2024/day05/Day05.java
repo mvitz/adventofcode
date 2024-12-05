@@ -14,14 +14,27 @@ public final class Day05 {
 	}
 
 	public static long sumOfMiddlePageNumbersFromCorrectlyOrderedUpdates(String input) {
-		var rulesAndUpdates = input.split("\n\n");
-		var rules = rulesFrom(rulesAndUpdates[0]);
-
-		return rulesAndUpdates[1].lines()
-				.map(Day05::updateFrom)
-				.filter(update -> isInRightOrder(update, rules))
+		var rulesAndUpdates = rulesAndUpdatesFrom(input);
+		return rulesAndUpdates.right().stream()
+				.filter(update -> isInRightOrder(update, rulesAndUpdates.left()))
 				.mapToInt(Day05::middleOf)
 				.sum();
+	}
+
+	public static long sumOfMiddlePageNumbersFromIncorrectlyOrderedUpdatesAfterOrdering(String input) {
+		var rulesAndUpdates = rulesAndUpdatesFrom(input);
+		return rulesAndUpdates.right().stream()
+				.filter(update -> !isInRightOrder(update, rulesAndUpdates.left()))
+				.map(update -> update.stream().sorted(rulesAndUpdates.left()).toList())
+				.mapToInt(Day05::middleOf)
+				.sum();
+	}
+
+	private static Pair<Comparator<Integer>, List<List<Integer>>> rulesAndUpdatesFrom(String input) {
+		var rulesAndUpdates = input.split("\n\n");
+		return Pair.of(
+				rulesFrom(rulesAndUpdates[0]),
+				updatesFrom(rulesAndUpdates[1]));
 	}
 
 	private static Comparator<Integer> rulesFrom(String input) {
@@ -42,6 +55,12 @@ public final class Day05 {
 	private static Pair<Integer, Integer> ruleFrom(String line) {
 		var parts = line.split("\\|");
 		return Pair.of(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+	}
+
+	private static List<List<Integer>> updatesFrom(String input) {
+		return input.lines()
+				.map(Day05::updateFrom)
+				.toList();
 	}
 
 	private static List<Integer> updateFrom(String line) {
