@@ -1,8 +1,8 @@
 package de.mvitz.aoc2024.day06;
 
-import de.mvitz.aoc2024.day06.Day06.Solution.Loop;
-import de.mvitz.aoc2024.day06.Day06.Solution.Step;
-import de.mvitz.aoc2024.day06.Day06.Solution.WalkOff;
+import de.mvitz.aoc2024.day06.Day06.Map.Path.Loop;
+import de.mvitz.aoc2024.day06.Day06.Map.Path.Step;
+import de.mvitz.aoc2024.day06.Day06.Map.Path.WalkOff;
 import de.mvitz.aoc2024.utils.Grid;
 import de.mvitz.aoc2024.utils.Point;
 
@@ -18,80 +18,101 @@ public final class Day06 {
 	}
 
 	public static long numberOfDistinctGuardPositions(String input) {
-		var grid = Grid.from(input);
-
-		var solution = walkthrough(grid);
-
-		if (!(solution instanceof WalkOff(var path))) {
-			throw new IllegalArgumentException("Guard never walked off the grid!");
-		}
-
-		return path.stream()
-				.map(Step::from)
-				.distinct()
-				.count();
+		return Map.from(input)
+				.predictGuardRoute()
+				.visitedPositions()
+				.size();
 	}
 
 	static long numberOfObstructionPositionsToProduceLoopFor(String input) {
-		var grid = Grid.from(input);
+		var map = Map.from(input);
 
-		var initialWalkOff = walkthrough(grid);
+		var originalPath = map.predictGuardRoute();
 
-		var startingPosition = initialWalkOff.path().getFirst().from();
-
-		return initialWalkOff.path().stream()
+		return originalPath.steps().stream()
 				.map(Step::to)
-				.filter(not(startingPosition::equals)) // obstacle can not be placed on starting position
-				.filter(to -> grid.valueAt(to).isPresent()) // obstacle can not be placed out of bounds
+				.filter(not(originalPath::startsAt)) // obstacle can not be placed on starting position
+				.filter(map::isInBounds) // obstacle can not be placed out of bounds
 				.distinct()
 				.parallel()
-				.map(to -> grid.with(to, "O")) // place obstacle on every possible position
-				.map(Day06::walkthrough) // walk through every relevant grid with obstacle
+				.map(map::withObstacleAt) // place obstacle on every possible position
+				.map(Map::predictGuardRoute) // walk through every relevant grid with obstacle
 				.filter(Loop.class::isInstance) // find all loops
 				.count();
 	}
 
-	private static Solution walkthrough(Grid grid) {
-		var currentDirection = UP;
-		var currentPosition = grid.coordinatesWith("^").getFirst();
+	record Map(Grid grid) {
 
-		var path = new ArrayList<Step>();
+		private static final String GUARD = "^";
+		private static final String OBSTRUCTION = "#";
 
-		var nextPosition = currentDirection.from(currentPosition);
-		var next = grid.valueAt(nextPosition);
-		while (next.isPresent()) {
-			if ("#".equals(next.get()) || "O".equals(next.get())) {
-				currentDirection = currentDirection.rotate90();
-			} else {
-				var step = new Step(currentPosition, nextPosition);
-				if (path.contains(step)) {
-					// loop
-					return new Loop(path);
-				}
-				path.add(step);
-				currentPosition = nextPosition;
+		sealed interface Path {
+
+			record Step(Point from, Point to) {
 			}
-			nextPosition = currentDirection.from(currentPosition);
-			next = grid.valueAt(nextPosition);
+
+			List<Step> steps();
+
+			default Point start() {
+				return steps().getFirst().from;
+			}
+
+			default boolean startsAt(Point position) {
+				return start().equals(position);
+			}
+
+			default List<Point> visitedPositions() {
+				return steps().stream()
+						.map(Step::from)
+						.distinct()
+						.toList();
+			}
+
+			record WalkOff(List<Step> steps) implements Path {
+			}
+
+			record Loop(List<Step> steps) implements Path {
+			}
 		}
 
-		path.add(new Step(currentPosition, nextPosition));
+		public Path predictGuardRoute() {
+			var currentDirection = UP;
+			var currentPosition = grid.coordinatesWith(GUARD).getFirst();
 
-		return new WalkOff(path);
-	}
+			var steps = new ArrayList<Step>();
 
-	sealed interface Solution {
+			var nextPosition = currentDirection.from(currentPosition);
+			var next = grid.valueAt(nextPosition);
+			while (next.isPresent()) {
+				if (OBSTRUCTION.equals(next.get())) {
+					currentDirection = currentDirection.rotate90();
+				} else {
+					var step = new Step(currentPosition, nextPosition);
+					if (steps.contains(step)) {
+						return new Loop(steps);
+					}
+					steps.add(step);
+					currentPosition = nextPosition;
+				}
+				nextPosition = currentDirection.from(currentPosition);
+				next = grid.valueAt(nextPosition);
+			}
 
+			steps.add(new Step(currentPosition, nextPosition));
 
-		record Step(Point from, Point to) {
+			return new WalkOff(steps);
 		}
 
-		List<Step> path();
-
-		record WalkOff(List<Step> path) implements Solution {
+		public boolean isInBounds(Point position) {
+			return grid.valueAt(position).isPresent();
 		}
 
-		record Loop(List<Step> path) implements Solution {
+		public Map withObstacleAt(Point position) {
+			return new Map(grid.with(position, OBSTRUCTION));
+		}
+
+		public static Map from(String input) {
+			return new Map(Grid.from(input));
 		}
 	}
 }
