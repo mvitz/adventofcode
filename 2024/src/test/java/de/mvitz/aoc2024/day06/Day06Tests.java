@@ -1,4 +1,4 @@
-package de.mvitz.aoc2024.day06.day05;
+package de.mvitz.aoc2024.day06;
 
 import de.mvitz.aoc2024.utils.Files;
 import org.junit.jupiter.api.Order;
