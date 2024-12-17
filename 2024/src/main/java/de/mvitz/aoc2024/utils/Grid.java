@@ -1,9 +1,6 @@
 package de.mvitz.aoc2024.utils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static de.mvitz.aoc2024.utils.Gatherers.mapWithIndex;
 import static java.util.function.Function.identity;
@@ -13,8 +10,14 @@ public final class Grid {
 
 	private final Map<Point, String> fields;
 
-	public Grid(Map<Point, String> fields) {
+	private Grid(Map<Point, String> fields) {
 		this.fields = fields;
+	}
+
+	public Grid with(Point coordinate, String value) {
+		var newFields = new HashMap<>(fields);
+		newFields.put(coordinate, value);
+		return new Grid(newFields);
 	}
 
 	public Optional<String> valueAt(Point coordinate) {
