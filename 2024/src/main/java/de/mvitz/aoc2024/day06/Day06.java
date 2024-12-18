@@ -1,8 +1,7 @@
 package de.mvitz.aoc2024.day06;
 
-import de.mvitz.aoc2024.day06.Day06.Map.Path.Loop;
+import de.mvitz.aoc2024.day06.Day06.Map.Path;
 import de.mvitz.aoc2024.day06.Day06.Map.Path.Step;
-import de.mvitz.aoc2024.day06.Day06.Map.Path.WalkOff;
 import de.mvitz.aoc2024.utils.Grid;
 import de.mvitz.aoc2024.utils.Point;
 
@@ -37,7 +36,7 @@ public final class Day06 {
 				.parallel()
 				.map(map::withObstacleAt) // place obstacle on every possible position
 				.map(Map::predictGuardRoute) // walk through every relevant grid with obstacle
-				.filter(Loop.class::isInstance) // find all loops
+				.filter(Path::isLoop) // find all loops
 				.count();
 	}
 
@@ -46,32 +45,32 @@ public final class Day06 {
 		private static final String GUARD = "^";
 		private static final String OBSTRUCTION = "#";
 
-		sealed interface Path {
+		record Path(List<Step> steps) {
 
 			record Step(Point from, Point to) {
 			}
 
-			List<Step> steps();
-
-			default Point start() {
-				return steps().getFirst().from;
+			public Point start() {
+				return steps.getFirst().from;
 			}
 
-			default boolean startsAt(Point position) {
+			public boolean startsAt(Point position) {
 				return start().equals(position);
 			}
 
-			default List<Point> visitedPositions() {
-				return steps().stream()
+			public boolean isLoop() {
+				return visitedPositions().contains(end());
+			}
+
+			private Point end() {
+				return steps.getLast().to;
+			}
+
+			public List<Point> visitedPositions() {
+				return steps.stream()
 						.map(Step::from)
 						.distinct()
 						.toList();
-			}
-
-			record WalkOff(List<Step> steps) implements Path {
-			}
-
-			record Loop(List<Step> steps) implements Path {
 			}
 		}
 
@@ -89,7 +88,8 @@ public final class Day06 {
 				} else {
 					var step = new Step(currentPosition, nextPosition);
 					if (steps.contains(step)) {
-						return new Loop(steps);
+						// loop
+						return new Path(steps);
 					}
 					steps.add(step);
 					currentPosition = nextPosition;
@@ -100,7 +100,7 @@ public final class Day06 {
 
 			steps.add(new Step(currentPosition, nextPosition));
 
-			return new WalkOff(steps);
+			return new Path(steps);
 		}
 
 		public boolean isInBounds(Point position) {
