@@ -24,6 +24,12 @@ public final class Day09 {
                 .checksum();
     }
 
+    public static long filesystemChecksumAfterCompactionOf(String input) {
+        return Disk.from(input)
+                .compact()
+                .checksum();
+    }
+
     private static final class Disk {
 
         private List<Block> blocks;
@@ -41,6 +47,7 @@ public final class Day09 {
                 switch (block) {
                     case File _ -> fragmentedBlocks.add(block);
                     case FreeSpace _ -> {
+                        // find right most block
                         while (!(blocks.get(j) instanceof File)) {
                             j--;
                         }
@@ -62,12 +69,55 @@ public final class Day09 {
             return this;
         }
 
+        @SuppressWarnings("java:S5413")
+        public Disk compact() {
+            for (var fileId = highestFileId(); fileId > -1; fileId--) {
+                var file = new File(fileId);
+                var fileIndex = blocks.indexOf(file);
+                var fileLength = blocks.lastIndexOf(file) - fileIndex + 1;
+
+                var newIndex = freeSpaceOf(fileLength);
+                if (newIndex > -1 && newIndex < blocks.indexOf(file)) {
+                    for (var i = 0; i < fileLength; i++) {
+                        // move block of file into new position
+                        blocks.remove(fileIndex + i);
+                        blocks.add(newIndex + i, file);
+
+                        // move free space into previous block position
+                        blocks.remove(newIndex + i + 1);
+                        blocks.add(fileIndex + i, FREE_SPACE);
+                    }
+                }
+            }
+
+            return this;
+        }
+
+
         @SuppressWarnings("preview")
         public long checksum() {
             return blocks.stream()
                     .gather(mapWithIndex((i, block) -> block.checksum(i)))
                     .mapToLong(checksum -> checksum)
                     .sum();
+        }
+
+        private long highestFileId() {
+            return blocks.stream()
+                    .filter(File.class::isInstance)
+                    .map(File.class::cast)
+                    .mapToLong(File::id)
+                    .max()
+                    .orElseThrow();
+        }
+
+        private int freeSpaceOf(int length) {
+            for (var i = 0; i + length < blocks.size(); i++) {
+                if (blocks.get(i) == FREE_SPACE && blocks.subList(i, i + length).stream().allMatch(FREE_SPACE::equals)) {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public static Disk from(String diskMap) {
@@ -78,7 +128,7 @@ public final class Day09 {
             var isFreeSpace = new AtomicBoolean(false);
             var id = new AtomicInteger(0);
 
-            return Arrays.stream(diskMap.split(""))
+            return new ArrayList<>(Arrays.stream(diskMap.split(""))
                     .map(Long::parseLong)
                     .flatMap(blockLength -> {
                         Block block;
@@ -91,7 +141,7 @@ public final class Day09 {
                         }
                         return Stream.generate(() -> block).limit(blockLength);
                     })
-                    .toList();
+                    .toList());
         }
     }
 
