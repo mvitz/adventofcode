@@ -23,6 +23,12 @@ public final class Day10 {
 				.count();
 	}
 
+	public static long sumOfTrailheadRatingsFor(String input) {
+		return TopographicMap.from(input)
+				.hikingTrails()
+				.size();
+	}
+
 	private record TopographicMap(Grid<Integer> grid) {
 
 		private record HikingTrail(List<Point> route) {
