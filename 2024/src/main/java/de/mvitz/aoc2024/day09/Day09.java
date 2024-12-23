@@ -30,120 +30,106 @@ public final class Day09 {
                 .checksum();
     }
 
-    private static final class Disk {
-
-        private List<Block> blocks;
-
-        private Disk(List<Block> blocks) {
-            this.blocks = blocks;
-        }
+    private record Disk(List<Block> blocks) {
 
         public Disk fragment() {
-            var fragmentedBlocks = new ArrayList<Block>();
-
-            var j = blocks.size() - 1;
-            for (var i = 0; i <= j; i++) {
-                var block = blocks.get(i);
-                switch (block) {
-                    case File _ -> fragmentedBlocks.add(block);
-                    case FreeSpace _ -> {
+                var j = blocks.size() - 1;
+                for (var i = 0; i <= j; i++) {
+                    if (blocks.get(i) instanceof FreeSpace) {
                         // find right most block
                         while (!(blocks.get(j) instanceof File)) {
                             j--;
                         }
                         if (j > i) {
-                            fragmentedBlocks.add(blocks.get(j));
+                            move(j, i);
                             j--;
                         }
                     }
                 }
+
+                return this;
             }
 
-            fragmentedBlocks.addAll(
-                    Stream.generate(() -> FREE_SPACE)
-                            .limit((long) blocks.size() - fragmentedBlocks.size())
-                            .toList());
+            public Disk compact() {
+                for (var fileId = highestFileId(); fileId > -1; fileId--) {
+                    var file = new File(fileId);
+                    var fileIndex = blocks.indexOf(file);
+                    var fileLength = blocks.lastIndexOf(file) - fileIndex + 1;
 
-            blocks = fragmentedBlocks;
-
-            return this;
-        }
-
-        @SuppressWarnings("java:S5413")
-        public Disk compact() {
-            for (var fileId = highestFileId(); fileId > -1; fileId--) {
-                var file = new File(fileId);
-                var fileIndex = blocks.indexOf(file);
-                var fileLength = blocks.lastIndexOf(file) - fileIndex + 1;
-
-                var newIndex = freeSpaceOf(fileLength);
-                if (newIndex > -1 && newIndex < blocks.indexOf(file)) {
-                    for (var i = 0; i < fileLength; i++) {
-                        // move block of file into new position
-                        blocks.remove(fileIndex + i);
-                        blocks.add(newIndex + i, file);
-
-                        // move free space into previous block position
-                        blocks.remove(newIndex + i + 1);
-                        blocks.add(fileIndex + i, FREE_SPACE);
+                    var newIndex = freeSpaceOf(fileLength);
+                    if (newIndex > -1 && newIndex < blocks.indexOf(file)) {
+                        for (var i = 0; i < fileLength; i++) {
+                            move(fileIndex + i, newIndex + i);
+                        }
                     }
                 }
+
+                return this;
             }
 
-            return this;
-        }
-
-
-        @SuppressWarnings("preview")
-        public long checksum() {
-            return blocks.stream()
-                    .gather(mapWithIndex((i, block) -> block.checksum(i)))
-                    .mapToLong(checksum -> checksum)
-                    .sum();
-        }
-
-        private long highestFileId() {
-            return blocks.stream()
-                    .filter(File.class::isInstance)
-                    .map(File.class::cast)
-                    .mapToLong(File::id)
-                    .max()
-                    .orElseThrow();
-        }
-
-        private int freeSpaceOf(int length) {
-            for (var i = 0; i + length < blocks.size(); i++) {
-                if (blocks.get(i) == FREE_SPACE && blocks.subList(i, i + length).stream().allMatch(FREE_SPACE::equals)) {
-                    return i;
+            private void move(int from, int to) {
+                if (from <= to) {
+                    throw new IllegalArgumentException("Moving only works to the left!");
                 }
+                // move from into to position
+                var block = blocks.remove(from);
+                blocks.add(to, block);
+
+                // move to into from position
+                block = blocks.remove(to + 1);
+                blocks.add(from, block);
             }
-            return -1;
-        }
 
-        public static Disk from(String diskMap) {
-            return new Disk(blocksFrom(diskMap));
-        }
+            @SuppressWarnings("preview")
+            public long checksum() {
+                return blocks.stream()
+                        .gather(mapWithIndex((i, block) -> block.checksum(i)))
+                        .mapToLong(checksum -> checksum)
+                        .sum();
+            }
 
-        private static List<Block> blocksFrom(String diskMap) {
-            var isFreeSpace = new AtomicBoolean(false);
-            var id = new AtomicInteger(0);
+            private long highestFileId() {
+                return blocks.stream()
+                        .filter(File.class::isInstance)
+                        .map(File.class::cast)
+                        .mapToLong(File::id)
+                        .max()
+                        .orElseThrow();
+            }
 
-            return new ArrayList<>(Arrays.stream(diskMap.split(""))
-                    .map(Long::parseLong)
-                    .flatMap(blockLength -> {
-                        Block block;
-                        if (isFreeSpace.get()) {
-                            isFreeSpace.set(false);
-                            block = FREE_SPACE;
-                        } else {
-                            isFreeSpace.set(true);
-                            block = new File(id.getAndIncrement());
-                        }
-                        return Stream.generate(() -> block).limit(blockLength);
-                    })
-                    .toList());
+            private int freeSpaceOf(int length) {
+                for (var i = 0; i + length < blocks.size(); i++) {
+                    if (blocks.get(i) == FREE_SPACE && blocks.subList(i, i + length).stream().allMatch(FREE_SPACE::equals)) {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+
+            public static Disk from(String diskMap) {
+                return new Disk(blocksFrom(diskMap));
+            }
+
+            private static List<Block> blocksFrom(String diskMap) {
+                var isFreeSpace = new AtomicBoolean(false);
+                var id = new AtomicInteger(0);
+
+                return new ArrayList<>(Arrays.stream(diskMap.split(""))
+                        .map(Long::parseLong)
+                        .flatMap(blockLength -> {
+                            Block block;
+                            if (isFreeSpace.get()) {
+                                isFreeSpace.set(false);
+                                block = FREE_SPACE;
+                            } else {
+                                isFreeSpace.set(true);
+                                block = new File(id.getAndIncrement());
+                            }
+                            return Stream.generate(() -> block).limit(blockLength);
+                        })
+                        .toList());
+            }
         }
-    }
 
     sealed interface Block {
 
