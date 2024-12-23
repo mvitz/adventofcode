@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static de.mvitz.aoc2024.utils.Direction.*;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.joining;
 
 public final class Day04 {
@@ -19,7 +20,7 @@ public final class Day04 {
 
 	public static long findNumberOfXmasAppearancesIn(String input) {
 		var directions = List.of(UP, UP_RIGHT, RIGHT, DOWN_RIGHT, DOWN, DOWN_LEFT, LEFT, UP_LEFT);
-		var wordSearch = Grid.from(input);
+		var wordSearch = Grid.from(input, identity());
 		return wordSearch.coordinatesWith("X").stream()
 				.mapToLong(x -> directions.stream()
 						.filter(direction -> "XMAS".equals(wordAt(wordSearch, x, direction, 4)))
@@ -29,14 +30,14 @@ public final class Day04 {
 
 	public static long findNumberOfXDashMasAppearancesIn(String input) {
 		var mas = Set.of("MAS", "SAM");
-		var wordSearch = Grid.from(input);
+		var wordSearch = Grid.from(input, identity());
 		return wordSearch.coordinatesWith("A").stream()
 				.filter(a -> mas.contains(wordAt(wordSearch, UP_LEFT.from(a), DOWN_RIGHT, 3)))
 				.filter(a -> mas.contains(wordAt(wordSearch, DOWN_LEFT.from(a), UP_RIGHT, 3)))
 				.count();
 	}
 
-	private static String wordAt(Grid grid, Point start, Direction direction, int length) {
+	private static String wordAt(Grid<String> grid, Point start, Direction direction, int length) {
 		var values = new ArrayList<Optional<String>>();
 
 		var coordinate = start;

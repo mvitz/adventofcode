@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static de.mvitz.aoc2024.utils.Direction.UP;
+import static java.util.function.Function.identity;
 import static java.util.function.Predicate.not;
 
 public final class Day06 {
@@ -40,7 +41,7 @@ public final class Day06 {
 				.count();
 	}
 
-	record Map(Grid grid) {
+	record Map(Grid<String> grid) {
 
 		private static final String GUARD = "^";
 		private static final String OBSTRUCTION = "#";
@@ -112,7 +113,7 @@ public final class Day06 {
 		}
 
 		public static Map from(String input) {
-			return new Map(Grid.from(input));
+			return new Map(Grid.from(input, identity()));
 		}
 	}
 }
