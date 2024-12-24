@@ -25,6 +25,10 @@ public final class Grid<T> {
 		return Optional.ofNullable(fields.get(coordinate));
 	}
 
+	public boolean isInBounds(Point coordinate) {
+		return valueAt(coordinate).isPresent();
+	}
+
 	public List<Point> coordinatesWith(T value) {
 		return fields.entrySet().stream()
 				.filter(field -> field.getValue().equals(value))
