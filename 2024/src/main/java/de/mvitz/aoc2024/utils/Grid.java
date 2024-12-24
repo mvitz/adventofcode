@@ -43,4 +43,8 @@ public final class Grid<T> {
 				.flatMap(identity())
 				.collect(toMap(Pair::left, Pair::right)));
 	}
+
+	public static Grid<String> from(String input) {
+		return from(input, identity());
+	}
 }
