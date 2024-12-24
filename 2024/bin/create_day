@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+#Creates the skeleton for another day.
+#
+#Usage:
+#  $ ./bin/create_day DAY
+
+set -euo pipefail
+IFS=$'\n\t'
+
+if [ $# -eq 0 ]; then
+  echo "$ ./bin/create_day DAY" >&2; exit 64
+fi
+
+day=$(printf "%02d" "${1}")
+
+mkdir -p src/{main/resources,{main,test}/java/de/mvitz/aoc2024}"/day${day}"
+
+cat <<EOT > "src/main/java/de/mvitz/aoc2024/day${day}/Day${day}.java"
+package de.mvitz.aoc2024.day${day};
+
+public final class Day${day} {
+
+	private Day${day}() {
+	}
+
+	public static long solutionFor(String input) {
+		throw new IllegalStateException("Not implemented");
+	}
+}
+EOT
+
+cat <<EOT > "src/test/java/de/mvitz/aoc2024/day${day}/Day${day}Tests.java"
+package de.mvitz.aoc2024.day${day};
+
+import de.mvitz.aoc2024.utils.Files;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+
+import static de.mvitz.aoc2024.day${day}.Day${day}.solutionFor;
+import static org.assertj.core.api.Assertions.assertThat;
+
+class Day${day}Tests {
+
+	@Test
+	@Order(0)
+	void part1_example() {
+		// given
+		var input = """
+
+				""";
+		// when
+		var solution = solutionFor(input);
+
+		// then
+		assertThat(solution)
+				.isEqualTo(-1);
+	}
+
+	@Test
+	@Order(1)
+	void part1() {
+		// given
+		var input = Files.contentOf("day${day}/input.txt");
+
+		// when
+		var solution = solutionFor(input);
+
+		// then
+		assertThat(solution)
+				.isEqualTo(-1);
+	}
+}
+EOT
+
+touch "src/main/resources/day${day}/input.txt"
