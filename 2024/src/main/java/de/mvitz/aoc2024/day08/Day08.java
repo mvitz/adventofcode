@@ -7,6 +7,7 @@ import de.mvitz.aoc2024.utils.Point;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -19,27 +20,62 @@ public final class Day08 {
     }
 
     public static long findUniqueAntinodeLocationsFrom(String input) {
-        var map = Grid.from(input);
-        return stream("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split(""))
-                .flatMap(antenna -> antinodesFor(antenna, map))
+        return AntennaMap.from(input)
+                .antinodes((route, _) -> Stream.of(route.applyTo(route.to), route.reverse().applyTo(route.from)))
                 .distinct()
                 .count();
     }
 
-    private static Stream<Point> antinodesFor(String antenna, Grid<String> map) {
-        var antinodes = new ArrayList<Point>();
+    public static long findUniqueResonantHarmonicAntinodeLocationsFrom(String input) {
+        return AntennaMap.from(input)
+                .antinodes(((route, grid) -> {
+                    var start = route.to;
+                    while (grid.isInBounds(start)) {
+                        start = route.applyTo(start);
+                    }
 
-        var coordinates = new ArrayDeque<>(map.coordinatesWith(antenna));
-        while (!coordinates.isEmpty()) {
-            var coordinate = coordinates.pollFirst();
-            coordinates.stream()
-                    .map(other -> new Route(coordinate, other))
-                    .flatMap(route -> Stream.of(route.applyTo(route.to), route.reverse().applyTo(route.from)))
-                    .filter(map::isInBounds)
-                    .forEach(antinodes::add);
+                    var antinodes = new ArrayList<Point>();
+
+                    var next = route.reverse().applyTo(start);
+                    while (grid.isInBounds(next)) {
+                        antinodes.add(next);
+                        next = route.reverse().applyTo(next);
+                    }
+
+                    return antinodes.stream();
+                }))
+                .distinct()
+                .count();
+    }
+
+    private record AntennaMap(Grid<String> grid) {
+
+        private static final String[] FREQUENCIES = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".split("");
+
+        public Stream<Point> antinodes(BiFunction<Route, Grid<String>, Stream<Point>> fn) {
+            return stream(FREQUENCIES)
+                    .flatMap(frequency -> antinodesFor(frequency, fn));
         }
 
-        return antinodes.stream();
+        private Stream<Point> antinodesFor(String frequency, BiFunction<Route, Grid<String>, Stream<Point>> fn) {
+            var antinodes = new ArrayList<Point>();
+
+            var coordinates = new ArrayDeque<>(grid.coordinatesWith(frequency));
+            while (!coordinates.isEmpty()) {
+                var coordinate = coordinates.pollFirst();
+                coordinates.stream()
+                        .map(other -> new Route(coordinate, other))
+                        .flatMap(route -> fn.apply(route, grid))
+                        .filter(grid::isInBounds)
+                        .forEach(antinodes::add);
+            }
+
+            return antinodes.stream();
+        }
+
+        public static AntennaMap from(String input) {
+            return new AntennaMap(Grid.from(input));
+        }
     }
 
     private record Route(Point from, Point to) {
